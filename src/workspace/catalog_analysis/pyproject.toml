@@ -1,0 +1,22 @@
+[project]
+name = "catalog-analysis"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "as-vikulin", email = "as-vikulin@sourcecraft" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+catalog-analysis = "catalog_analysis:main"
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.16.8",
+]

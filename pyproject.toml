@@ -1,0 +1,22 @@
+[project]
+name = "python-basics"
+version = "0.1.0"
+description = "Labs for Python basics cource"
+readme = "README.md"
+authors = [
+    { name = "as-vikulin", email = "as-vikulin@sourcecraft" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+workspace = "workspace:main"
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.workspace]
+members = [
+    "src/workspace/catalog_analysis",
+]
