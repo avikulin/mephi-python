@@ -1,0 +1,22 @@
+[project]
+name = "python-basics"
+version = "0.1.0"
+description = "Labs for Python basics course"
+readme = "README.md"
+authors = [
+    { name = "Andrey Vikulin", email = "asvikulin@mail.ru" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+python-basics = "python_basics:main"
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.workspace]
+members = [
+    "src/python_basics/catalog_analysis",
+]
