@@ -10,7 +10,7 @@ requires-python = ">=3.12"
 dependencies = []
 
 [project.scripts]
-workspace = "workspace:main"
+python-basics = "python_basics:main"
 
 [build-system]
 requires = ["uv_build>=0.12.17,<0.13.0"]
@@ -18,5 +18,5 @@ build-backend = "uv_build"
 
 [tool.uv.workspace]
 members = [
-    "src/workspace/catalog_analysis",
+    "src/python_basics/catalog_analysis",
 ]
