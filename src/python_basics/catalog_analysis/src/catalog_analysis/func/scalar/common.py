@@ -1,4 +1,5 @@
 from typing import List, Dict
+from data_samples import metadata
 
 # 1) Функция average_rating(movies)
 # ------------------------------------
@@ -37,34 +38,40 @@ from typing import List, Dict
 
 def average_rating(movies: List[Dict[str, Any]])->float:
     """Возвращает среднюю оценку по каталогу, округленную до одного знака."""
-    RATING_KEY:str = 'rating'   # да, приходится дублировать код, чтобы не допускать жесткой связи между модулями
+    clear_movies = clear(movies) # делаем очистку от вкраплений None
+    
     movies_length:int = len(movies)
+    clear_movies_length:int = len(clear_movies)
 
-    if movies_length == 0:
+    if movies_length == 0 | clear_movies_length == 0:
         return 0
-    if movies_length == 1:
-        return movies[0][RATING_KEY]
+
+    if clear_movies_length == 1:
+        return clear_movies[0][RATING_KEY]
     
     avg_rating = 0
-    for movie in movies:
+    for movie in clear_movies:
         avg_rating += movie[RATING_KEY]
-    avg_rating /= movies_length
+    
+    avg_rating /= movies_length # делим на количество фильмов в исходном (неочищенном) списке
 
     return round(avg_rating, 1)
 
 
 def catalog_age_stats(movies:List[Dict[str, Any]], current_year:int=2026) -> int:
     """Возвращает кортеж (самый старый фильм в годах, самый новый фильм в годах, среднее), где среднее округлено вверх до целого с помощью math.ceil."""
-    YEAR_KEY:str = 'year'
     earliest_year = current_year + 1
     latest_year = -1
+    sum_years = 0
+    movies_length = len(movies)
 
-    for movie in movies:
+    for movie in clear(movies):
         year = movie[YEAR_KEY]
         earliest_year = min(earliest_year, year)
         latest_year = max(latest_year, year)
+        sum_years += year
     
-    return (latest_year, earliest_year, math.ceil(average_rating(movies)))
+    return (latest_year, earliest_year, math.ceil(sum_years / movies_length))
 
 
 def duration_in_hours(minutes:int):

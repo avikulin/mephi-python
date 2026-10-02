@@ -1,4 +1,5 @@
 from .movies import get_data
+from .metadata import *
 
 __all__ = [
     "get_data",

@@ -1,7 +1,7 @@
 [project]
 name = "python-basics"
 version = "0.1.0"
-description = "Labs for Python basics cource"
+description = "Labs for Python basics course"
 readme = "README.md"
 authors = [
     { name = "as-vikulin", email = "as-vikulin@sourcecraft" }
