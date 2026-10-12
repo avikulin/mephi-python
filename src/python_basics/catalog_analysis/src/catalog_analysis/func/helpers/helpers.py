@@ -1,5 +1,6 @@
 from typing import List
 
+
 def clear(collection: List):
     if collection is None:
         raise ValueError("Collection is None, which is not allowed")
