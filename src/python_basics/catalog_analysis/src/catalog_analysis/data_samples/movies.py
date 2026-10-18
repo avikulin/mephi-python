@@ -6,7 +6,7 @@ def get_data() -> List[Dict]:
         {
             "title": "The Dune Chronicles", 
             "year": 2021, 
-            "genres": {"sci-fi", "drama"},
+            "genres": ["sci-fi", "drama"],
             "rating": 8.6, 
             "duration_min": 155, 
             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]
@@ -14,15 +14,15 @@ def get_data() -> List[Dict]:
         {
             "title": "Kitchen Stories", 
             "year": 2019, 
-            "genres": {"comedy", "drama"},
+            "genres": ["comedy", "drama"],
             "rating": 7.1, 
             "duration_min": 98, 
             "actors": ["A. Novak", "M. Ferguson"]
         },
         {
-            "title": "silent hours", 
+            "title": "Silent hours",
             "year": 2016, 
-            "genres": {"thriller", "drama"},
+            "genres": ["thriller", "drama"],
             "rating": 6.4, 
             "duration_min": 112, 
             "actors": ["J. Bloom", "K. Lee"]
@@ -30,7 +30,7 @@ def get_data() -> List[Dict]:
         {
             "title": "Comet Racers", 
             "year": 2023, 
-            "genres": {"sci-fi", "action"},
+            "genres": ["sci-fi", "action"],
             "rating": 5.9, 
             "duration_min": 101, 
             "actors": ["O. Isaac", "P. Diaz"]
@@ -38,15 +38,15 @@ def get_data() -> List[Dict]:
         {
             "title": "The Last Bakery", 
             "year": 2014, 
-            "genres": {"comedy"},
+            "genres": ["comedy"],
             "rating": 7.8, 
             "duration_min": 89, 
             "actors": ["A. Novak", "T. Chalamet"]
         },
         {
-            "title": "midnight in oslo", 
+            "title": "Midnight in Oslo",
             "year": 2020, 
-            "genres": {"thriller", "mystery"},
+            "genres": ["thriller", "mystery"],
             "rating": 8.9, 
             "duration_min": 124, 
             "actors": ["K. Lee", "R. Ferguson"]
@@ -54,7 +54,7 @@ def get_data() -> List[Dict]:
         {
             "title": "Garden of Static", 
             "year": 2022, 
-            "genres": {"drama"},
+            "genres": ["drama"],
             "rating": 4.8, 
             "duration_min": 137, 
             "actors": ["P. Diaz", "J. Bloom"]
@@ -62,7 +62,7 @@ def get_data() -> List[Dict]:
         {
             "title": "The Quiet Algorithm", 
             "year": 2024, 
-            "genres": {"sci-fi", "drama"},
+            "genres": ["sci-fi", "drama"],
             "rating": 9.2, 
             "duration_min": 118, 
             "actors": ["M. Ferguson", "O. Isaac"]
@@ -70,7 +70,7 @@ def get_data() -> List[Dict]:
         {
             "title": "Two Left Shoes", 
             "year": 2011, 
-            "genres": {"comedy"},
+            "genres": ["comedy"],
             "rating": 6.0, 
             "duration_min": 95, 
             "actors": ["A. Novak", "K. Lee"]
@@ -78,7 +78,7 @@ def get_data() -> List[Dict]:
         {
             "title": "Red Harbor", 
             "year": 2018, 
-            "genres": {"action", "thriller"},
+            "genres": ["action", "thriller"],
             "rating": 7.3, 
             "duration_min": 129, 
             "actors": ["P. Diaz", "T. Chalamet"]

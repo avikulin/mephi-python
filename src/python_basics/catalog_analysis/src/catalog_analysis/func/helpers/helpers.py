@@ -1,5 +1,9 @@
-from typing import List
+from typing import List, Set
 
+
+def protect_not_empty(collection: List|Set):
+    if not collection:
+        raise ValueError("Input list must be not empty")  # предохранитель от пустого списка и None на входе
 
 def clear(collection: List):
     if collection is None:

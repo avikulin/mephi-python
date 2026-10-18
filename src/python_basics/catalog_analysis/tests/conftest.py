@@ -1,5 +1,5 @@
 import pytest
-from utils.general_film_collections import (
+from _fixtures.general_film_collections import (
     empty,
     random_2,
     random_3,

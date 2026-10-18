@@ -10,12 +10,12 @@ from catalog_analysis.data_samples.metadata import (
 )
 
 
-def construct_film(title: str,
-                   year: int,
-                   genres: List[str],
-                   rating: float,
-                   duration: int,
-                   actors: List[str]):
+def _construct_film(title: str,
+                    year: int,
+                    genres: List[str],
+                    rating: float,
+                    duration: int,
+                    actors: List[str]):
     return {
         TITLE_KEY: title,
         YEAR_KEY: year,
@@ -32,4 +32,4 @@ def create_film(title: str,
                 rating: float,
                 duration: int,
                 actors: List[str]):
-    return construct_film(title, year, {genre}, rating, duration, actors)
+    return _construct_film(title, year, [genre], rating, duration, actors)

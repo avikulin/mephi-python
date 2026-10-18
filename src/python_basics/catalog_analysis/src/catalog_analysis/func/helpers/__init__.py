@@ -1,3 +1,3 @@
-from .helpers import clear
+from .helpers import clear, protect_not_empty
 
-__all__ = ["clear"]
+__all__ = ["clear", "protect_not_empty"]

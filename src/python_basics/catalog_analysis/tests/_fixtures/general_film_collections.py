@@ -1,6 +1,6 @@
 import copy
 
-from utils.fake_film_factory import create_film
+from .fake_film_factory import create_film
 
 films = [
     create_film(
