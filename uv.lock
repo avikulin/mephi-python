@@ -92,6 +92,12 @@ wheels = [
 name = "python-basics"
 version = "0.1.0"
 source = { editable = "." }
+dependencies = [
+    { name = "dz-catalog-analysis-vikulin-m25-555" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "dz-catalog-analysis-vikulin-m25-555", editable = "src/python_basics/dz-catalog-analysis-vikulin-m25-555" }]
 
 [[package]]
 name = "ruff"

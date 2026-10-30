@@ -1,6 +1,10 @@
-from catalog_analysis.data_samples import TITLE_KEY, YEAR_KEY, GENRES_KEY, DURATION_KEY
+from catalog_analysis.data_samples import DURATION_KEY, TITLE_KEY, YEAR_KEY
 from catalog_analysis.data_samples.movies import get_data
-from catalog_analysis.func.scalar.common import average_rating, catalog_age_stats, duration_in_hours
+from catalog_analysis.func.scalar.common import (
+    average_rating,
+    catalog_age_stats,
+    duration_in_hours,
+)
 
 if __name__ == "__main__":
     print("\nЭтап 1. Разминка: переменные, числа, `math`\n")
@@ -29,6 +33,7 @@ if __name__ == "__main__":
         name = movie[TITLE_KEY]
         year = movie[YEAR_KEY]
         duration = movie[DURATION_KEY]
-        print(f"\t#{idx + 1}. {name}, {year} = {duration} мин. / {duration_in_hours(duration)}")
+        duration_h = duration_in_hours(duration)
+        print(f"\t#{idx + 1}. {name}, {year} = {duration} мин. / {duration_h}")
 
     print()

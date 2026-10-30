@@ -1,6 +1,6 @@
-from catalog_analysis.data_samples import TITLE_KEY, YEAR_KEY, GENRES_KEY, RATING_KEY
+from catalog_analysis.data_samples import GENRES_KEY, RATING_KEY, TITLE_KEY, YEAR_KEY
 from catalog_analysis.data_samples.movies import get_data
-from catalog_analysis.func.scalar.common import rating_tier, decade_label
+from catalog_analysis.func.scalar.common import decade_label, rating_tier
 
 if __name__ == "__main__":
     print("\nЭтап 2. Условия и `match`\n")

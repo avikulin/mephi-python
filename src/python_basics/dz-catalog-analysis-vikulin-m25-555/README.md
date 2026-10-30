@@ -11,6 +11,8 @@ demo = "catalog_analysis.demo.__main__:main"
 *A)* Запуск на исполнение выходного отчета по каталогу фильмов:
 
 ```commandline
+git checkout hw/catalog_analysis
+uv sync
 uv run catalog-analysis
 ```
 
