@@ -20,3 +20,9 @@ dz-catalog-analysis-vikulin-m25-555 = { workspace = true }
 members = [
     "src/python_basics/dz-catalog-analysis-vikulin-m25-555",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.8",
+]
