@@ -1,0 +1,28 @@
+[project]
+name = "python-basics"
+version = "0.1.0"
+description = "Labs for Python basics course"
+readme = "README.md"
+authors = [
+    { name = "Andrey Vikulin", email = "asvikulin@mail.ru" }
+]
+requires-python = ">=3.12"
+dependencies = ["dz-catalog-analysis-vikulin-m25-555"]
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+dz-catalog-analysis-vikulin-m25-555 = { workspace = true }
+
+[tool.uv.workspace]
+members = [
+    "src/python_basics/dz-catalog-analysis-vikulin-m25-555",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.8",
+]
