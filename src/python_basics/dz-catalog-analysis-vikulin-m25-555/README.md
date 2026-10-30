@@ -45,6 +45,7 @@ uv run demo
 *С)* Проект содержит набор `unit`-тестов для автоматизированного контроля качества кода:
 
 ```commandline
+uv sync --dev  
 uv run pytest
 ```
 
