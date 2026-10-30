@@ -18,5 +18,5 @@ build-backend = "uv_build"
 
 [tool.uv.workspace]
 members = [
-    "src/python_basics/catalog_analysis",
+    "src/python_basics/dz-catalog-analysis-vikulin-m25-555",
 ]
