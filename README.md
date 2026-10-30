@@ -10,7 +10,7 @@
 Cквозной мини-проект, объединяющий материал пройденных тем: от переменных и чисел до множеств, словарей, итераторов и генераторов. 
 Представляет собой набор функций для внутреннего отчета стримингового сервиса, которые анализируют каталог фильмов — считают статистику, категоризируют записи, строят отчеты по жанрам и актерам, ищут топовые позиции.
 
-> Рабочая ветка: [hw/catalog_analysis](https://github.com/avikulin/mephi-python/tree/hw/catalog_analysis)
+> Рабочая ветка: [hw/catalog_analysis](https://github.com/avikulin/mephi-python/blob/hw/catalog_analysis/src/python_basics/dz-catalog-analysis-vikulin-m25-555/README.md)
 
 
 ## Задание #2. Примитивная база данных.
