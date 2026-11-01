@@ -1,0 +1,4 @@
+{
+  "data_dir": "data",
+  "max_rows_in_select": 20
+}

@@ -1,0 +1,41 @@
+{
+  "NAME": "books",
+  "COLUMNS": [
+    {
+      "NAME": "ID",
+      "DATATYPE": "INTEGER",
+      "IS_MANDATORY": true,
+      "IS_PRIMARY": true
+    },
+    {
+      "NAME": "title",
+      "DATATYPE": "STRING",
+      "IS_MANDATORY": false,
+      "IS_PRIMARY": false
+    },
+    {
+      "NAME": "author",
+      "DATATYPE": "STRING",
+      "IS_MANDATORY": false,
+      "IS_PRIMARY": false
+    },
+    {
+      "NAME": "year_of_publish",
+      "DATATYPE": "DATETIME",
+      "IS_MANDATORY": false,
+      "IS_PRIMARY": false
+    },
+    {
+      "NAME": "pressrun_quantity",
+      "DATATYPE": "INTEGER",
+      "IS_MANDATORY": false,
+      "IS_PRIMARY": false
+    },
+    {
+      "NAME": "rating",
+      "DATATYPE": "float",
+      "IS_MANDATORY": false,
+      "IS_PRIMARY": false
+    }
+  ]
+}

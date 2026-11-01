@@ -1,0 +1,37 @@
+[project]
+name = "python-basics"
+version = "0.1.0"
+description = "Labs for Python basics course"
+readme = "README.md"
+authors = [
+    { name = "Andrey Vikulin", email = "asvikulin@mail.ru" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "dz-simple-database-vikulin-m25-555",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.workspace]
+members = [
+    "src/python_basics/dz-simple-database-vikulin-m25-555",
+]
+
+[project.scripts]
+project = "dz_simple_database_vikulin_m25_555.main:main"
+
+[tool.uv.sources]
+dz-simple-database-vikulin-m25-555 = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.8",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["src/python_basics/dz-simple-database-vikulin-m25-555/tests"]
+#addopts = "-q --tb=short"

@@ -1,0 +1,72 @@
+[
+  {
+    "title": "1984",
+    "author": "George Orwell",
+    "year_of_publish": "1949-06-08T00:00:00",
+    "pressrun_quantity": "500000",
+    "rating": 4.8
+  },
+  {
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "year_of_publish": "1960-07-11T00:00:00",
+    "pressrun_quantity": "450000",
+    "rating": 4.9
+  },
+  {
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "year_of_publish": "1925-04-10T00:00:00",
+    "pressrun_quantity": "300000",
+    "rating": 4.7
+  },
+  {
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "year_of_publish": "1813-01-28T00:00:00",
+    "pressrun_quantity": "600000",
+    "rating": 4.6
+  },
+  {
+    "title": "The Catcher in the Rye",
+    "author": "J. D. Salinger",
+    "year_of_publish": "1951-07-16T00:00:00",
+    "pressrun_quantity": "400000",
+    "rating": 4.5
+  },
+  {
+    "title": "Moby Dick",
+    "author": "Herman Melville",
+    "year_of_publish": "1851-10-18T00:00:00",
+    "pressrun_quantity": "250000",
+    "rating": 4.4
+  },
+  {
+    "title": "War and Peace",
+    "author": "Leo Tolstoy",
+    "year_of_publish": "1869-12-01T00:00:00",
+    "pressrun_quantity": "700000",
+    "rating": 4.9
+  },
+  {
+    "title": "The Lord of the Rings",
+    "author": "J. R. R. Tolkien",
+    "year_of_publish": "1954-07-29T00:00:00",
+    "pressrun_quantity": "800000",
+    "rating": 4.8
+  },
+  {
+    "title": "Brave New World",
+    "author": "Aldous Huxley",
+    "year_of_publish": "1932-09-01T00:00:00",
+    "pressrun_quantity": "350000",
+    "rating": 4.6
+  },
+  {
+    "title": "The Hobbit",
+    "author": "J. R. R. Tolkien",
+    "year_of_publish": "1937-09-21T00:00:00",
+    "pressrun_quantity": "550000",
+    "rating": 4.7
+  }
+]
