@@ -3,6 +3,7 @@ from typing import Any, List
 
 from dz_simple_database_vikulin_m25_555.config.db_config import DbConfig
 from dz_simple_database_vikulin_m25_555.expression.db_predicate import DbPredicate
+from dz_simple_database_vikulin_m25_555.expression.db_predicate_operation import DbPredicateOperation
 from dz_simple_database_vikulin_m25_555.io.json_io import read_json, write_json
 from dz_simple_database_vikulin_m25_555.model.db_datatype import DbDataType
 from dz_simple_database_vikulin_m25_555.model.db_table import DbTable, PKEY_NAME
@@ -62,7 +63,8 @@ class DbTableStore:
                 column_typed_value = DbValueConstructor.construct(column_value_str, data_type)
                 row_typed_values.append(column_typed_value)
 
-            self.arena[pkey] = row_typed_values
+            typed_pkey = DbValueConstructor.construct(pkey, DbDataType.INTEGER)
+            self.arena[typed_pkey] = row_typed_values
 
 
     def flush(self):
@@ -72,6 +74,11 @@ class DbTableStore:
     def select_tuples(self, predicate: DbPredicate) -> List[List[str]]:
         if predicate is None:
             raise DbOperationException("Не задано условие отбора строк")
+
+        # если ищем по строгому соответствию 'ID' - то используем индекс
+        if (predicate.column.name == PKEY_NAME and
+                predicate.operation == DbPredicateOperation.EQ):
+            return self.arena.get(predicate.value,[]) # по умолчанию
 
         column_index = self.column_names.index(predicate.column.name) \
                             if predicate.column.name != PKEY_NAME \

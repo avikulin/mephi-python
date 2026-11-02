@@ -17,10 +17,7 @@ class DbDataType(StrEnum):
     @classmethod
     def from_string(cls, str_value: str) -> DbDataType:
         cleaned_value = str_value.strip().lower()
-        for dt in DbDataType:
-            if cleaned_value == dt.value:
-                return dt
-        raise ValueError(f"Unsupported datatype: {str_value}")
+        return DbDataType(cleaned_value)
 
     def validate(self, value: Any) -> bool:
         """Проверяет некоторое значение

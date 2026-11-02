@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 from typing import Union
 
@@ -56,3 +58,5 @@ class DbPredicate:
 
             case DbPredicateOperation.LE:
                 return field_data <= self.value
+
+

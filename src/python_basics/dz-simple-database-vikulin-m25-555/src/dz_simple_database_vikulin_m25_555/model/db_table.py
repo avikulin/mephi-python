@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import json
 
+from dz_simple_database_vikulin_m25_555.expression.db_predicate import DbPredicate
+from dz_simple_database_vikulin_m25_555.expression.db_predicate_operation import DbPredicateOperation
 from dz_simple_database_vikulin_m25_555.model.db_column import DbColumn
 from dz_simple_database_vikulin_m25_555.model.db_datatype import DbDataType
+from dz_simple_database_vikulin_m25_555.table_store.db_value_constructor import DbValueConstructor
 from dz_simple_database_vikulin_m25_555.validation import (
     validate_dict,
     validate_list,
@@ -14,6 +17,9 @@ PKEY_NAME = "ID"
 TABLE_NAME = "NAME"
 COLUMNS_NAME = "COLUMNS"
 
+class DbTableOperationException(Exception):
+    """Доменное исключение для операций с таблицами"""
+
 
 class DbTable:
     name: str
@@ -23,9 +29,9 @@ class DbTable:
         validate_string(name, "name")
         validate_list(columns, "columns")
         self._name = name
-        self._columns: list[DbColumn] = [
-            DbColumn(PKEY_NAME, DbDataType.INTEGER, True, True)
-        ]
+        pkey = DbColumn(PKEY_NAME, DbDataType.INTEGER, True, True)
+        self._columns: list[DbColumn] = [pkey]
+        self._column_index = {pkey.name.lower() : pkey}
         for column in columns:
             if not isinstance(column, DbColumn):
                 raise TypeError(
@@ -38,6 +44,15 @@ class DbTable:
                     f"первичный ключ создаётся автоматически"
                 )
             self._columns.append(column)
+            self._column_index[column.name.lower()] = column
+
+    def get_column(self, name: str) -> DbColumn:
+        """Ищет объект DbColumn по имени (без учета регистра)"""
+        validate_string(name, "name")
+        column = self._column_index[name.lower()]
+        if column is None:
+            raise DbTableOperationException(f"В схеме таблицы нет колонки '{name}'")
+        return column
 
     @classmethod
     def from_schema(cls, name: str, columns: dict[str, str]) -> DbTable:
@@ -67,7 +82,7 @@ class DbTable:
 
     @property
     def column_names(self) -> list[str]:
-        return [column.name for column in self._columns]
+        return [column.name.lower() for column in self._columns]
 
     @property
     def columns(self) -> list[DbColumn]:
@@ -82,6 +97,15 @@ class DbTable:
             TABLE_NAME: self.name,
             COLUMNS_NAME: [column for column in self._columns],
         }
+
+    def process_predicate(self, source:str) -> DbPredicate:
+        """Создает объект DbPredicate из строкового представления"""
+        validate_string(source, "source")
+        lvalue, op, rvalue = DbPredicateOperation.find_and_split(source)
+        column = self.get_column(lvalue)
+        data_type = column.datatype
+        typed_criteria = DbValueConstructor.construct(rvalue, data_type)
+        return DbPredicate(column, op, typed_criteria)
 
     def to_json(self) -> str:
         """Сериализует таблицу в JSON на основе metadata."""

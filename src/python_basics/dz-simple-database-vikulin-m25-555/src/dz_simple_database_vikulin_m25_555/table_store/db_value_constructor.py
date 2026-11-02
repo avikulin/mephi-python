@@ -9,7 +9,7 @@ class DbValueConstructor:
     def construct(
         cls, source: str, datatype: DbDataType
     ) -> Union[str, bool, int, float, datetime]:
-        clean_value = source.strip()
+        clean_value = source.strip() if type(source) == str else source
         match datatype:
             case DbDataType.STRING:
                 return clean_value

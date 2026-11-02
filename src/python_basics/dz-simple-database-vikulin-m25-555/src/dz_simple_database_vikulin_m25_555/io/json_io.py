@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+from dz_simple_database_vikulin_m25_555.utils.db_datetime_encoder import DbDateTimeJSONEncoder
+
 
 class JsonIOError(Exception):
     """Доменное исключение для ошибок чтения/записи JSON-файлов"""
@@ -36,7 +38,7 @@ def write_json(path: Path, data: dict) -> None:
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open("w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+            json.dump(data, f, ensure_ascii=False, indent=2, cls=DbDateTimeJSONEncoder)
     except PermissionError as e:
         raise JsonIOError(f"Нет прав на запись файла: {path}") from e
     except OSError as e:
