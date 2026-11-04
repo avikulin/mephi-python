@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import json
+from typing import AnyStr, Any, Dict
 
 from dz_simple_database_vikulin_m25_555.expression.db_predicate import DbPredicate
 from dz_simple_database_vikulin_m25_555.expression.db_predicate_operation import DbPredicateOperation
 from dz_simple_database_vikulin_m25_555.model.db_column import DbColumn
 from dz_simple_database_vikulin_m25_555.model.db_datatype import DbDataType
+from dz_simple_database_vikulin_m25_555.table_store.db_table_store import DbTableStore
 from dz_simple_database_vikulin_m25_555.table_store.db_value_constructor import DbValueConstructor
 from dz_simple_database_vikulin_m25_555.validation import (
     validate_dict,
@@ -116,37 +118,16 @@ class DbTable:
         return json.dumps(metadata, ensure_ascii=False)
 
     @classmethod
-    def from_json(cls, source: str) -> DbTable:
+    def from_json(cls, source: Dict[str, Any]) -> DbTable:
         """Восстанавливает таблицу из JSON-строки."""
-        validate_string(source, "source")
-        try:
-            data = json.loads(source)
-        except json.JSONDecodeError as e:
-            raise ValueError(
-                f"Параметр 'source' должен быть корректным JSON: {e}"
-            ) from None
-        validate_dict(data, "data")
-        name = validate_string(data.get(TABLE_NAME), f"data['{TABLE_NAME}']")
-        columns = data.get(COLUMNS_NAME)
-        if not isinstance(columns, list):
-            raise TypeError(
-                f"Параметр 'data['{COLUMNS_NAME}']' должен быть списком, "
-                f"получен {type(columns).__name__}"
-            )
-        if not columns:
-            raise ValueError("Таблица должна содержать хотя бы одну колонку")
-        restored = [DbColumn.from_json(json.dumps(item)) for item in columns]
-        expected_pkey = DbColumn(PKEY_NAME, DbDataType.INTEGER, True, True)
-        primaries = [c for c in restored if c.is_primary]
-        if primaries != [expected_pkey]:
-            raise ValueError(
-                f"Первичный ключ в JSON должен быть "
-                f"{expected_pkey!s}, получен: {primaries!s}"
-            )
-        business = [c for c in restored if not c.is_primary]
-        if not business:
-            raise ValueError(
-                "Таблица должна содержать хотя бы одну колонку "
-                "с бизнес-данными помимо первичного ключа"
-            )
-        return cls(name, business)
+        validate_dict(source, "source")
+        if TABLE_NAME not in source:
+            raise DbTableOperationException(f"Неправильный формат источника: "
+                                            f"отсутствует поле '{TABLE_NAME}'")
+
+        if COLUMNS_NAME not in source[TABLE_NAME]:
+            raise DbTableOperationException(f"Неправильный формат источника: "
+                                            f"отсутствует поле '{COLUMNS_NAME}'")
+        table_name = source[TABLE_NAME]
+        columns = source[COLUMNS_NAME]
+        return DbTable.from_schema(table_name, columns)

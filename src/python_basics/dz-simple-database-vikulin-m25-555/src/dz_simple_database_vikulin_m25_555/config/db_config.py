@@ -2,7 +2,7 @@ import copy
 from pathlib import Path
 from typing import Dict, Any
 
-from dz_simple_database_vikulin_m25_555.io import read_json
+from dz_simple_database_vikulin_m25_555.utils.io import read_json
 
 CFG_DIR_NAME = "cfg"
 DATA_DIR_NAME = "data"

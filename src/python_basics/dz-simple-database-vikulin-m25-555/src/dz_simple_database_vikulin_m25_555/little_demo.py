@@ -1,17 +1,16 @@
-import json
+from pathlib import Path
 
 from dz_simple_database_vikulin_m25_555.config.db_config import DbConfig
-from dz_simple_database_vikulin_m25_555.expression.db_predicate import DbPredicate
-from dz_simple_database_vikulin_m25_555.expression.db_predicate_operation import DbPredicateOperation
+from dz_simple_database_vikulin_m25_555.metadata_store.db_metadata_store import DbMetadataStore
 from dz_simple_database_vikulin_m25_555.model.db_table import DbTable
 from dz_simple_database_vikulin_m25_555.table_store.db_table_store import DbTableStore
+from dz_simple_database_vikulin_m25_555.utils.io import read_json
 
 if __name__ == "__main__":
-    table_schema = ""
-    with open("sample_schema.json", "r") as file:
-        table_schema = file.read()
-
     config = DbConfig()
+    metadata = DbMetadataStore(config)
+
+    table_schema = read_json(Path("sample_schema.json"))
     table = DbTable.from_json(table_schema)
     table_store = DbTableStore(table, config)
 

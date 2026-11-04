@@ -1,4 +1,4 @@
-from dz_simple_database_vikulin_m25_555.io.json_io import (
+from dz_simple_database_vikulin_m25_555.utils.io.json_io import (
     JsonIOError,
     read_json,
     write_json,

@@ -1,17 +1,16 @@
 from pathlib import Path
-from typing import Any, List
+from typing import List
 
 from dz_simple_database_vikulin_m25_555.config.db_config import DbConfig
 from dz_simple_database_vikulin_m25_555.expression.db_predicate import DbPredicate
 from dz_simple_database_vikulin_m25_555.expression.db_predicate_operation import DbPredicateOperation
-from dz_simple_database_vikulin_m25_555.io.json_io import read_json, write_json
+from dz_simple_database_vikulin_m25_555.utils.io import read_json, write_json
 from dz_simple_database_vikulin_m25_555.model.db_datatype import DbDataType
 from dz_simple_database_vikulin_m25_555.model.db_table import DbTable, PKEY_NAME
 from dz_simple_database_vikulin_m25_555.table_store.db_value_constructor import DbValueConstructor
-from dz_simple_database_vikulin_m25_555.validation import validate_dict, validate_string, validate_list
+from dz_simple_database_vikulin_m25_555.validation import validate_string, validate_list
 
-SCHEMA_FILE_NAME = "schema.json"
-DATA_FILE_NAME = "data.json"
+
 
 class DbOperationException(Exception):
     """Доменное исключение для обработки ошибок в параметрах операций"""
@@ -20,18 +19,22 @@ class DbSchemaException(Exception):
     """Доменное исключение для обработки ошибок несоответствия схемы данных"""
 
 class DbTableStore:
-    def __init__(self, schema: DbTable, global_cfg: DbConfig):
-        schema_state = "Отсутствует" if schema is None else "Присутствует"
-        cfg_state = "Отсутствует" if global_cfg is None else "Присутствует"
-        if schema is None or global_cfg is None:
+    def __init__(self, schema: DbTable, data_file_name:Path):
+        if schema is None:
             raise ValueError(
                 f"Ошибка инициализации параметров: "
-                f"schema = {schema_state}, global_cfg = {cfg_state}"
+                f"отсутствует параметр 'schema'"
             )
-        self.config = global_cfg
+
+        if data_file_name is None:
+            raise ValueError(
+                f"Ошибка инициализации параметров: "
+                f"отсутствует параметр 'data_file_name'"
+            )
+
         self.schema = schema
         self.table_name = schema.name
-        self.data_file_name = self.config.data_directory_path / self.table_name / DATA_FILE_NAME
+        self.data_file_name = data_file_name
 
         self.column_names = []
         self.column_types = []
