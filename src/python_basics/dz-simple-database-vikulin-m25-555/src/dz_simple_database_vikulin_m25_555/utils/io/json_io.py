@@ -1,6 +1,7 @@
 import json
 import os
 from pathlib import Path
+from typing import Any, Dict
 
 from dz_simple_database_vikulin_m25_555.utils.io.db_datetime_encoder import DbDateTimeJSONEncoder
 
@@ -49,14 +50,22 @@ def write_json(path: Path, data: dict) -> None:
             f"Данные не сериализуются в JSON для файла {path}: {e}"
         ) from e
 
-def drop_file(path: Path) -> bool:
+def drop_file(path: Path) -> None:
     if os.path.exists(path) and not path.is_dir():
         try:
             os.remove(path)
-            return True
         except PermissionError:
             raise JsonIOError(f"Ошибка: нет прав на удаление файла '{path}'")
         except OSError as e:
             raise JsonIOError(f"Ошибка ОС при удалении файла '{path}': {e}")
     # если файла нет - то просто выходим
-    return False
+
+
+def touch_file(path: Path, initial_data=None) -> None:
+    if initial_data is None:
+        initial_data = dict()
+    if not os.path.exists(path) and not path.is_dir():
+        try:
+            write_json(path, initial_data)
+        except PermissionError | OSError as e:
+            raise JsonIOError(f"Ошибка создания файла '{path}': {e}")

@@ -1,15 +1,14 @@
 from __future__ import annotations
 
 import json
-from typing import AnyStr, Any, Dict
+from typing import Any, Dict
 
 from dz_simple_database_vikulin_m25_555.expression.db_predicate import DbPredicate
 from dz_simple_database_vikulin_m25_555.expression.db_predicate_operation import DbPredicateOperation
 from dz_simple_database_vikulin_m25_555.model.db_column import DbColumn
 from dz_simple_database_vikulin_m25_555.model.db_datatype import DbDataType
-from dz_simple_database_vikulin_m25_555.table_store.db_table_store import DbTableStore
 from dz_simple_database_vikulin_m25_555.table_store.db_value_constructor import DbValueConstructor
-from dz_simple_database_vikulin_m25_555.validation import (
+from dz_simple_database_vikulin_m25_555.utils.validation import (
     validate_dict,
     validate_list,
     validate_string,
@@ -100,15 +99,6 @@ class DbTable:
             COLUMNS_NAME: [column for column in self._columns],
         }
 
-    def process_predicate(self, source:str) -> DbPredicate:
-        """Создает объект DbPredicate из строкового представления"""
-        validate_string(source, "source")
-        lvalue, op, rvalue = DbPredicateOperation.find_and_split(source)
-        column = self.get_column(lvalue)
-        data_type = column.datatype
-        typed_criteria = DbValueConstructor.construct(rvalue, data_type)
-        return DbPredicate(column, op, typed_criteria)
-
     def to_json(self) -> str:
         """Сериализует таблицу в JSON на основе metadata."""
         metadata = self.metadata
@@ -125,7 +115,7 @@ class DbTable:
             raise DbTableOperationException(f"Неправильный формат источника: "
                                             f"отсутствует поле '{TABLE_NAME}'")
 
-        if COLUMNS_NAME not in source[TABLE_NAME]:
+        if COLUMNS_NAME not in source:
             raise DbTableOperationException(f"Неправильный формат источника: "
                                             f"отсутствует поле '{COLUMNS_NAME}'")
         table_name = source[TABLE_NAME]

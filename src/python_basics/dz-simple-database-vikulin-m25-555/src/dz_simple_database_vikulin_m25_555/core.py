@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
 from dz_simple_database_vikulin_m25_555.model.db_table import DbTable
-from validation.helpers import validate_dict, validate_string
+from dz_simple_database_vikulin_m25_555.utils.validation.helpers import validate_dict, validate_string
 
 class DbEngine:
     DATA_CATALOG = "/data"

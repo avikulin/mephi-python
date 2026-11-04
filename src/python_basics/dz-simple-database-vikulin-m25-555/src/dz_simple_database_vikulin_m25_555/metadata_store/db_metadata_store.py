@@ -5,8 +5,8 @@ from dz_simple_database_vikulin_m25_555.config.db_config import DbConfig
 from dz_simple_database_vikulin_m25_555.model.db_table import DbTable, PKEY_NAME
 from dz_simple_database_vikulin_m25_555.table_store.db_table_store import DbTableStore
 from dz_simple_database_vikulin_m25_555.utils.io import read_json, write_json, JsonIOError
-from dz_simple_database_vikulin_m25_555.utils.io.json_io import drop_file
-from dz_simple_database_vikulin_m25_555.validation import validate_string
+from dz_simple_database_vikulin_m25_555.utils.io.json_io import drop_file, touch_file
+from dz_simple_database_vikulin_m25_555.utils.validation import validate_string
 
 SCHEMA_FILE_NAME = "schema.json"
 DATA_FILE_NAME = "data.json"
@@ -28,6 +28,7 @@ class DbMetadataStore:
 
     def _restore_state(self):
         try:
+            touch_file(self.metadata_file_name) # создаем файл, если его не было
             data = read_json(self.metadata_file_name)  # читаем из файла
         except JsonIOError as e:
             raise DbMetadataException(f"Ошибка чтения файла каталога метаданных "
@@ -43,7 +44,8 @@ class DbMetadataStore:
                 table_schema = self._construct_table_schema(schema_file_path)
                 self.metadata_index[table_name] = table_schema
                 self.store_index[table_name] = DbTableStore(table_schema,
-                                                            data_file_path)
+                                                            data_file_path,
+                                                            self.config)
         except ValueError as e:
             raise DbMetadataException(f"Ошибка формата файла каталога метаданных "
                                       f"'{self.metadata_file_name}': {e}") from e
@@ -97,7 +99,7 @@ class DbMetadataStore:
             SCHEMA_FILE_PATH_KEY: schema_file_path
         }
         self.metadata_index[name] = table
-        self.store_index[name] = DbTableStore(table, data_file_path)
+        self.store_index[name] = DbTableStore(table, data_file_path, self.config)
         self._flush_arena()
         return table
 

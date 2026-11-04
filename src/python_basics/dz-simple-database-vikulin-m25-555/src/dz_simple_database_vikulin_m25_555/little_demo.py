@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from dz_simple_database_vikulin_m25_555.command.concreete.db_insert_command import DbCommandInsert
+from dz_simple_database_vikulin_m25_555.command.concreete.db_select_command import DbCommandSelect
 from dz_simple_database_vikulin_m25_555.config.db_config import DbConfig
 from dz_simple_database_vikulin_m25_555.metadata_store.db_metadata_store import DbMetadataStore
 from dz_simple_database_vikulin_m25_555.model.db_table import DbTable
@@ -11,22 +13,27 @@ if __name__ == "__main__":
     metadata = DbMetadataStore(config)
 
     table_schema = read_json(Path("sample_schema.json"))
-    table = DbTable.from_json(table_schema)
-    table_store = DbTableStore(table, config)
+    metadata.register_table("books", table_schema)
 
-    id_filter = "ID = 1"
-    id_predicate = table.process_predicate(id_filter)
-    is_present = table_store.select_tuples(id_predicate)
+    select_1 = DbCommandSelect(metadata)
+    select_1.parse_string("select from books where id = 1")
+    select_1.validate()
+
+    is_present = select_1.execute()
     print("Ищем существующую строку:")
     print(is_present)
     print()
     if len(is_present) == 0:
         print("Не нашли. Вставляем новую...")
-        table_store.insert_tuple(["1", "The Great Gatsby", "F. Scott Fitzgerald", "1925-04-10T00:00:00", "300000", "4.7"])
-        predicate_str = "pressrun_quantity >= 300000"
-        filter = table.process_predicate(predicate_str)
-        print(table_store.select_tuples(filter))
-        table_store.flush()
+        insert = DbCommandInsert(metadata)
+        insert.parse_string("insert into books values "
+                            "(1, 'The Great Gatsby', 'F. Scott Fitzgerald', '1925-04-10T00:00:00', 300000, 4.7)")
+        insert.validate()
+        insert.execute()
+        print(insert.execute())
 
-    #l, o, r = DbPredicateOperation.find_and_split(predicate_str)
-    #print(table_store.select_tuples(DbPredicate(table.columns[4],DbPredicateOperation.GE, 300000)))
+        select_2 = DbCommandSelect(metadata)
+        select_2.parse_string("select from books where pressrun_quantity >= 300000")
+        select_2.validate()
+        print(select_2.execute())
+        table_store.flush()

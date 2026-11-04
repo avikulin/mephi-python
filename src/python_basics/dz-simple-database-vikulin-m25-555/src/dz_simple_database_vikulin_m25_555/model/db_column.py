@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from dz_simple_database_vikulin_m25_555.model.db_datatype import DbDataType
-from dz_simple_database_vikulin_m25_555.validation import validate_dict, validate_string
+from dz_simple_database_vikulin_m25_555.utils.validation import validate_dict, validate_string
 
 COLUMN_NAME = "NAME"
 DATATYPE_NAME = "DATATYPE"
