@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Union
 
-from dz_simple_database_vikulin_m25_555.expression.db_predicate_operation import (
+from dz_simple_database_vikulin_m25_555.command.expression.db_predicate_operation import (
     DbPredicateOperation,
 )
 from dz_simple_database_vikulin_m25_555.model.db_column import DbColumn

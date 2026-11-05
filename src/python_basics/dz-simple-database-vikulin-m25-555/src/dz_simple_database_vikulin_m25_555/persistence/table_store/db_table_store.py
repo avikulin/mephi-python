@@ -2,12 +2,12 @@ from pathlib import Path
 from typing import List
 
 from dz_simple_database_vikulin_m25_555.config.db_config import DbConfig, MAX_ROWS_SELECT
-from dz_simple_database_vikulin_m25_555.expression.db_predicate import DbPredicate
-from dz_simple_database_vikulin_m25_555.expression.db_predicate_operation import DbPredicateOperation
+from dz_simple_database_vikulin_m25_555.command.expression.db_predicate import DbPredicate
+from dz_simple_database_vikulin_m25_555.command.expression.db_predicate_operation import DbPredicateOperation
 from dz_simple_database_vikulin_m25_555.utils.io import read_json, write_json
 from dz_simple_database_vikulin_m25_555.model.db_datatype import DbDataType
 from dz_simple_database_vikulin_m25_555.model.db_table import DbTable, PKEY_NAME
-from dz_simple_database_vikulin_m25_555.table_store.db_value_constructor import DbValueConstructor
+from dz_simple_database_vikulin_m25_555.persistence.table_store.db_value_constructor import DbValueConstructor
 from dz_simple_database_vikulin_m25_555.utils.io.json_io import touch_file
 from dz_simple_database_vikulin_m25_555.utils.validation import validate_string, validate_list
 
@@ -85,7 +85,14 @@ class DbTableStore:
         if (predicate is not None and
                 predicate.column.name == PKEY_NAME and
                     predicate.operation == DbPredicateOperation.EQ):
-            return self.arena.get(predicate.value,[]) # по умолчанию
+            pkey = predicate.value
+            row_values = self.arena.get(pkey,[])
+            if len(row_values) == 0:
+                return []
+
+            result = [str(pkey)]
+            result.extend(row_values)
+            return [result] # по умолчанию
 
         column_index = None
         if predicate is not None:
@@ -156,11 +163,15 @@ class DbTableStore:
         # возвращаем удаленные строки
         return tuples_to_delete
 
-    def update_tuple(self, column_name, value: str, predicate: DbPredicate) -> List[List[str]]:
-        validate_string(column_name)
-        validate_string(value)
+    def update_tuple(self, column_name:str, value: str, predicate: DbPredicate) -> List[List[str]]:
+        validate_string(column_name, "column_name")
+        validate_string(value, "value")
 
         # ID не учитываем, так как его обновлять нельзя
+        if column_name == PKEY_NAME:
+            raise DbOperationException(f"Запрещено обновлять значение "
+                                       f"первичного ключа записи ({PKEY_NAME})")
+
         if column_name not in self.column_names:
             raise DbOperationException(f"Поле {column_name} не входит "
                                        f"в схему таблицы '{self.table_name}: "
@@ -180,10 +191,13 @@ class DbTableStore:
 
         for index in range(len(tuples_for_update)):
             tuple_to_update = tuples_for_update[index]
-            filter_value = tuple_to_update[1 + filter_column_index]
-            if predicate.apply(filter_value):
-                tuples_for_update[index][1+ update_column_index] = str(value)
-                id_to_update = tuples_for_update[0]
+            filter_str_value = tuple_to_update[1 + filter_column_index]
+            filter_column_type = predicate.column.datatype
+            filter_typed_value = DbValueConstructor.construct(filter_str_value,
+                                                              filter_column_type)
+            if predicate.apply(filter_typed_value):
+                tuple_to_update[1+ update_column_index] = str(value)
+                id_to_update = int(tuple_to_update[0])
                 new_typed_value = DbValueConstructor.construct(value,
                                                                update_column_type)
                 self.arena[id_to_update][update_column_index] = new_typed_value

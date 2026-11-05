@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from enum import StrEnum
 from typing import Any
-
+import math
 
 class DbDataType(StrEnum):
     """Отображает скалярные типы данных,
@@ -31,8 +31,8 @@ class DbDataType(StrEnum):
             case DbDataType.FLOAT:
                 try:
                     float(value)
-                    return ("inf" not in value and
-                            "nan" not in value.lower())
+                    return not (math.isinf(value) or
+                                math.isnan(value))
                 except ValueError:
                     return False
             case DbDataType.DATETIME:

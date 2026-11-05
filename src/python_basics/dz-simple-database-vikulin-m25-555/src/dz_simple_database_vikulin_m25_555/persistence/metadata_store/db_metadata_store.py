@@ -3,7 +3,7 @@ from typing import Dict, Tuple
 
 from dz_simple_database_vikulin_m25_555.config.db_config import DbConfig
 from dz_simple_database_vikulin_m25_555.model.db_table import DbTable, PKEY_NAME
-from dz_simple_database_vikulin_m25_555.table_store.db_table_store import DbTableStore
+from dz_simple_database_vikulin_m25_555.persistence.table_store.db_table_store import DbTableStore
 from dz_simple_database_vikulin_m25_555.utils.io import read_json, write_json, JsonIOError
 from dz_simple_database_vikulin_m25_555.utils.io.json_io import drop_file, touch_file
 from dz_simple_database_vikulin_m25_555.utils.validation import validate_string
