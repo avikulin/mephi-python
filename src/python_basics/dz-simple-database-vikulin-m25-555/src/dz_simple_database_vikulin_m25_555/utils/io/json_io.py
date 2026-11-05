@@ -60,6 +60,14 @@ def drop_file(path: Path) -> None:
             raise JsonIOError(f"Ошибка ОС при удалении файла '{path}': {e}")
     # если файла нет - то просто выходим
 
+def drop_folder(path: Path) -> None:
+    if os.path.exists(path) and path.is_dir():
+        try:
+            os.rmdir(path)
+        except PermissionError:
+            raise JsonIOError(f"Ошибка: нет прав на удаление каталога '{path}'")
+        except OSError as e:
+            raise JsonIOError(f"Ошибка ОС при удалении каталога '{path}': {e}")
 
 def touch_file(path: Path, initial_data=None) -> None:
     if initial_data is None:

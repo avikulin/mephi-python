@@ -60,7 +60,7 @@ class DbTable:
         if not columns:
             raise ValueError("Параметр 'columns' не должен быть пустым")
         restored = [
-            DbColumn(k, DbDataType.from_string(v), False, False)
+            DbColumn(k, DbDataType.from_string(v), True, False)
             for k, v in columns.items()
         ]
         return cls(name, restored)

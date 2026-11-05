@@ -1,5 +1,8 @@
 from pathlib import Path
 
+from dz_simple_database_vikulin_m25_555.command.concreete.db_create_table import DbCommandCreateTable
+from dz_simple_database_vikulin_m25_555.command.concreete.db_delete_command import DbCommandDelete
+from dz_simple_database_vikulin_m25_555.command.concreete.db_drop_table import DbCommandDropTable
 from dz_simple_database_vikulin_m25_555.command.concreete.db_insert_command import (
     DbCommandInsert,
 )
@@ -17,8 +20,22 @@ if __name__ == "__main__":
     config = DbConfig()
     metadata = DbMetadataStore(config)
 
-    table_schema = read_json(Path("books_schema.json"))
-    metadata.register_table("books", table_schema)
+    exists = metadata.check_table_exists("books")
+    print("Проверяем, существует ли таблица 'books': ", exists)
+
+    if not exists:
+        print("Таблицы такой нет. Создаем:")
+        create_statement = ("create table books ("
+                            "title : string, "
+                            "author : string,  "
+                            "year_of_publish : datetime, "
+                            "pressrun_quantity : integer, "
+                            "rating: float)")
+        print(f"\t{create_statement}")
+        create = DbCommandCreateTable(metadata)
+        create.parse_string(create_statement)
+        create.validate()
+        print("Результат: ", create.execute())
 
     select_1 = DbCommandSelect(metadata)
     select_1.parse_string("select from books where id = 1")
@@ -63,3 +80,28 @@ if __name__ == "__main__":
     select_3.parse_string(select_statement_2)
     select_3.validate()
     print("Результат: ", select_3.execute())
+
+    print("Теперь попробуем удалить строку по условию:")
+    delete_statement = "delete from books where year_of_publish = '1925-04-10T00:00:00'"
+    print(f"\t{delete_statement}")
+    delete = DbCommandDelete(metadata)
+    delete.parse_string(delete_statement)
+    delete.validate()
+    result = delete.execute()
+    print("Удаленный строки: ", result)
+
+    print("Теперь посмотрим на строки, которые остались:")
+    select_statement_4 = "select from books"
+    print(f"\t{select_statement_4}")
+
+    select_4 = DbCommandSelect(metadata)
+    select_4.parse_string(select_statement_4)
+    select_4.validate()
+    print("Результат: ", select_4.execute())
+
+    print("А теперь просто удалим таблицу 'books'")
+    drop_statement = "drop table books"
+    drop = DbCommandDropTable(metadata)
+    drop.parse_string(drop_statement)
+    drop.validate()
+    print("Удалена таблица: ", drop.execute())

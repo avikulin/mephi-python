@@ -36,8 +36,8 @@ class DbCommandSelect(DbCommandBase):
         ),
     ]
     DESCRIPTION = (
-        "Возращает набор записей указанной таблицы (<имя_таблицы>),\n "
-        "которые удовлетворяют переданному предикату: <столбец> = <значение>"
+        "Возвращает набор записей указанной таблицы (<имя_таблицы>),\n "
+        "которые удовлетворяют переданному предикату: <столбец> = <значение>."
     )
 
     RULES = [
@@ -68,7 +68,11 @@ class DbCommandSelect(DbCommandBase):
         if select_token != "select" or from_token != "from":
             raise DbCommandException("Нарушение семантики команды: SELECT FROM ...")
         table_name = params[2]
-        validate_string(table_name, "TABLE")
+        try:
+            validate_string(table_name, "TABLE")
+        except Exception:
+            raise DbCommandException("Нарушение семантики команды: "
+                                     "некорректно задано название целевой таблицы")
 
         predicate = None
         if len(params) > 3:

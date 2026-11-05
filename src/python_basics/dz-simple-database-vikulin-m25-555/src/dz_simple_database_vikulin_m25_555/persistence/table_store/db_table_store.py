@@ -145,16 +145,13 @@ class DbTableStore:
         return [result]
 
     def delete_tuple(self, predicate: DbPredicate) -> List[List[str]]:
-        if predicate is None:
-            raise DbOperationException("Не задано условие удаления строк")
-
         tuples_to_delete = self.select_tuples(predicate)
         if len(tuples_to_delete) == 0:
             return []
 
         for index in range(len(tuples_to_delete)):
             tuple_to_delete = tuples_to_delete[index]
-            id_to_delete = tuple_to_delete[0]
+            id_to_delete = int(tuple_to_delete[0])
             self.arena.pop(id_to_delete)
 
         # сохраняем изменения на диск

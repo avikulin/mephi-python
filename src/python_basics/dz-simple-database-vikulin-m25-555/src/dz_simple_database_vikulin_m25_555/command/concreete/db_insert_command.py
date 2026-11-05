@@ -28,13 +28,14 @@ class DbCommandInsert(DbCommandBase):
             "<значение1..N>,",
             List[str],
             "Значения колонок, которые будут вставлены в строку",
-            False,
+            True,
         ),
     ]
     DESCRIPTION = (
         "Выполняет вставку новой строки в таблицу (<имя_таблицы>),\n "
         "заполняя значения колонок слева направо в переданном порядке: \n"
         "<значение1>, <значение2>, ..."
+        "Вставленные строки возвращаются в качестве результата выполнения команды."
     )
 
     RULES = [
@@ -43,6 +44,8 @@ class DbCommandInsert(DbCommandBase):
         "Значение ИД должно быть первым по счету",
         "Значение ИД должно быть целочисленным значением",
         "Значение ИД должно быть уникальным в рамках таблицы",
+        "Возвращаются все строки, которые были вставлены в таблицу",
+        "Возвращаются все колонки вставленных строк, указанные в схеме таблицы",
     ]
 
     def __init__(self, metadata: DbMetadataStore) -> None:
@@ -68,7 +71,11 @@ class DbCommandInsert(DbCommandBase):
             raise DbCommandException("Нарушение семантики команды: INSERT INTO ...")
 
         table_name = params[2].lower()
-        validate_string(table_name, "TABLE")
+        try:
+            validate_string(table_name, "TABLE")
+        except Exception:
+            raise DbCommandException("Нарушение семантики команды: "
+                                     "некорректно задано название целевой таблицы")
         self.table = self.metadata.get_table_schema(table_name)
         self.table_store = self.metadata.get_table_store(table_name)
 

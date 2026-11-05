@@ -37,7 +37,7 @@ class DbDataType(StrEnum):
                     return False
             case DbDataType.DATETIME:
                 try:
-                    datetime.fromisoformat(value)
+                    datetime.fromisoformat(str(value))
                     return True
                 except ValueError:
                     return False
