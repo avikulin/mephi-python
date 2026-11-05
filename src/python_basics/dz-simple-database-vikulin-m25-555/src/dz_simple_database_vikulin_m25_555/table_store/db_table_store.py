@@ -130,6 +130,11 @@ class DbTableStore:
         # возвращаем вставленную строку
         result = [str(row_pkey)]
         result.extend(row_values)
+
+        # сохраняем изменения на диск
+        self.flush()
+
+        # возвращаем вставленные строки
         return [result]
 
     def delete_tuple(self, predicate: DbPredicate) -> List[List[str]]:
@@ -145,6 +150,10 @@ class DbTableStore:
             id_to_delete = tuple_to_delete[0]
             self.arena.pop(id_to_delete)
 
+        # сохраняем изменения на диск
+        self.flush()
+
+        # возвращаем удаленные строки
         return tuples_to_delete
 
     def update_tuple(self, column_name, value: str, predicate: DbPredicate) -> List[List[str]]:
@@ -179,4 +188,8 @@ class DbTableStore:
                                                                update_column_type)
                 self.arena[id_to_update][update_column_index] = new_typed_value
 
+        # сохраняем изменения на диск
+        self.flush()
+
+        # возвращаем измененные строки
         return tuples_for_update

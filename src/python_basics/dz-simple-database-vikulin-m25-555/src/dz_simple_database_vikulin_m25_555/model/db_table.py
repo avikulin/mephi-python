@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Dict
+from typing import Any, Dict, Union, List
 
 from dz_simple_database_vikulin_m25_555.expression.db_predicate import DbPredicate
 from dz_simple_database_vikulin_m25_555.expression.db_predicate_operation import DbPredicateOperation
@@ -56,7 +56,7 @@ class DbTable:
         return column
 
     @classmethod
-    def from_schema(cls, name: str, columns: dict[str, str]) -> DbTable:
+    def from_schema(cls, name: str, columns: Dict[str, str]) -> DbTable:
         """Создаёт таблицу из схемы: имя колонки → строковое имя типа данных."""
         validate_string(name, "name")
         validate_dict(columns, "columns")
@@ -90,13 +90,21 @@ class DbTable:
         return list(self._columns)
 
     @property
-    def metadata(self) -> dict:
+    def metadata(self) -> Dict[str,Union[str, List[DbColumn]]]:
         """Метаданные таблицы.
         В COLUMNS попадают все колонки (в т.ч. и первичный ключ).
         """
         return {
             TABLE_NAME: self.name,
             COLUMNS_NAME: [column for column in self._columns],
+        }
+
+    @property
+    def schema(self)->Dict[str, Any]:
+        """Формирует структурированную схему таблицы"""
+        return {
+            column.name: column.datatype
+            for column in self.metadata[COLUMNS_NAME]
         }
 
     def to_json(self) -> str:

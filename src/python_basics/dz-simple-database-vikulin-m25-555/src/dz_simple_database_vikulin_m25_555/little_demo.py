@@ -12,7 +12,7 @@ if __name__ == "__main__":
     config = DbConfig()
     metadata = DbMetadataStore(config)
 
-    table_schema = read_json(Path("sample_schema.json"))
+    table_schema = read_json(Path("books_schema.json"))
     metadata.register_table("books", table_schema)
 
     select_1 = DbCommandSelect(metadata)
@@ -36,4 +36,4 @@ if __name__ == "__main__":
         select_2.parse_string("select from books where pressrun_quantity >= 300000")
         select_2.validate()
         print(select_2.execute())
-        table_store.flush()
+

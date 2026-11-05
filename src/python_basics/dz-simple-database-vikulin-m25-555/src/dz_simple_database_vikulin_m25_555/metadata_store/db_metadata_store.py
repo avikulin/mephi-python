@@ -41,7 +41,8 @@ class DbMetadataStore:
                     Path(data_file_path),
                     Path(schema_file_path)
                 }
-                table_schema = self._construct_table_schema(schema_file_path)
+                table_schema = self._construct_table_schema(table_name,
+                                                            schema_file_path)
                 self.metadata_index[table_name] = table_schema
                 self.store_index[table_name] = DbTableStore(table_schema,
                                                             data_file_path,
@@ -60,10 +61,10 @@ class DbMetadataStore:
         schema_file_path = self.config.data_directory_path / name / SCHEMA_FILE_NAME
         return data_file_path, schema_file_path
 
-    def _construct_table_schema(self, schema_file_path: Path) -> DbTable:
+    def _construct_table_schema(self, table_name:str, schema_file_path: Path) -> DbTable:
         try:
             schema_json = read_json(schema_file_path)
-            return DbTable.from_json(schema_json)
+            return DbTable.from_schema(table_name, schema_json)
         except JsonIOError as e:
             raise DbMetadataException(f"Ошибка чтения файла схемы таблицы: "
                                       f"'{schema_file_path}': {e}") from e
@@ -71,7 +72,15 @@ class DbMetadataStore:
 
     def _flush_arena(self):
         try:
-            write_json(self.metadata_file_name, self.arena)
+            data_to_flush = {}
+            for name, data in self.arena.items():
+                table_meta = {
+                    DATA_FILE_PATH_KEY: str(data[DATA_FILE_PATH_KEY]),
+                    SCHEMA_FILE_PATH_KEY: str(data[SCHEMA_FILE_PATH_KEY]),
+                }
+                data_to_flush[name] = table_meta
+
+            write_json(self.metadata_file_name, data_to_flush)
         except JsonIOError as e:
             raise DbMetadataException(f"Ошибка записи файла каталога метаданных "
                                       f"'{self.metadata_file_name}': {e}") from e
@@ -87,7 +96,7 @@ class DbMetadataStore:
         data_file_path, schema_file_path = self._construct_paths(name)
         try:
             table = DbTable.from_schema(name, schema)
-            write_json(schema_file_path, table.metadata)
+            write_json(schema_file_path, table.schema)
         except DbMetadataException as e:
             raise DbMetadataException(f"Ошибка обработки схемы столбцов: {e}") from e
         except JsonIOError as e:
