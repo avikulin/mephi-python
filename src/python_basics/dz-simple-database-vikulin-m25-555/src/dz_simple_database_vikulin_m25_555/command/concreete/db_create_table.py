@@ -94,5 +94,13 @@ class DbCommandCreateTable(DbCommandBase):
             schema[column_name] = column_type
 
         table = self.metadata.register_table(table_name, schema)
+
+        # регистрируем схему результата
+        self.result_title = f"Создана таблица '{table_name}'"
+        self.register_result_schema_item("Имя колонки")
+        self.register_result_schema_item("Тип данных")
+        self.register_result_schema_item("Обязательная?")
+        self.register_result_schema_item("Первичный ключ?")
+
         return [ [c.name, c.datatype, c.is_primary, c.is_mandatory]
                  for c in table.columns ]

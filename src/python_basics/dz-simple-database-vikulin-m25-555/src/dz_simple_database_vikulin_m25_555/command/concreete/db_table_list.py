@@ -27,14 +27,15 @@ class DbCommandTableList(DbCommandBase):
 
 
     def parse_params(self, params: List[str]) -> None:
-        """Ожидаем:
-        create table info <имя_таблицы>
-        """
+        """Ожидаем:  table list """
         table_token = params[0].lower()
         list_token = params[1].lower()
         if table_token != "table" or list_token != "list":
             raise DbCommandException("Нарушение семантики команды: TABLE LIST")
 
     def execute(self) -> List[List[str]]:
+        # регистрируем схему результата
+        self.result_title = f"Список зарегистрированных таблиц БД"
+        self.register_result_schema_item("Имя таблицы")
         return [[table_name]
                 for table_name in self.metadata.tables]

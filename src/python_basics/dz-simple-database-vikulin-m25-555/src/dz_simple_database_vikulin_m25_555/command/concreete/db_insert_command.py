@@ -112,4 +112,10 @@ class DbCommandInsert(DbCommandBase):
                 f"для вставки во внутреннем контексте команды: "
                 f"{self.number_of_values}"
             )
+
+        # регистрируем схему результата
+        self.result_title = f"В таблицу '{self.table.name}' добавлены строки"
+        for column_name in self.table.column_names:
+            self.register_result_schema_item(column_name)
+
         return self.table_store.insert_tuple(values)

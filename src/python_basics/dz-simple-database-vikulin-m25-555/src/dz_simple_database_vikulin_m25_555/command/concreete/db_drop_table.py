@@ -52,6 +52,9 @@ class DbCommandDropTable(DbCommandBase):
 
 
     def execute(self) -> List[List[str]]:
-        table_name = self.get_param_value(0)
+        table_name:str = self.get_param_value(0)
         self.metadata.drop_table(table_name)
+        # регистрируем схему результата
+        self.result_title = "Удалена таблица"
+        self.register_result_schema_item("Имя таблицы")
         return [ [table_name ] ]

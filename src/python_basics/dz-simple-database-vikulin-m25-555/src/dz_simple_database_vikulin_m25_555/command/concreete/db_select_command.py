@@ -90,4 +90,10 @@ class DbCommandSelect(DbCommandBase):
 
     def execute(self) -> List[List[str]]:
         predicate = self.get_param_value(1)
+
+        # регистрируем схему результата
+        self.result_title = f"Из таблицы '{self.table.name}' получены строки"
+        for column_name in self.table.column_names:
+            self.register_result_schema_item(column_name)
+
         return self.table_store.select_tuples(predicate)

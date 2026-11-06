@@ -25,7 +25,7 @@ class DbCommandBase:
         token_schema: str,
         params_schema: List[DbCommandParam],
         description: str,
-        rules: List[str],
+        rules: List[str]
     ):
 
         # проверка и инициализация ссылки на хранилище метаданных
@@ -47,6 +47,8 @@ class DbCommandBase:
         self.__description = description
         self.__rules = rules
         self.__params_values = []
+        self.__result_schema = []
+        self.__result_title = ""
 
     def get_help(self) -> str:
         """Получение структурированной справочной информации по команде"""
@@ -85,6 +87,24 @@ class DbCommandBase:
     def params_schema(self) -> List[DbCommandParam]:
         """Возвращает список типизированных параметров"""
         return copy.deepcopy(self.__params_schema)
+
+    @property
+    def result_schema(self) -> List[str]:
+        return [column_title for column_title in self.__result_schema]
+
+
+    def register_result_schema_item(self, item:str) -> None:
+        validate_string(item, "item")
+        self.__result_schema.append(item)
+
+    @property
+    def result_title(self) -> str:
+        return self.__result_title
+
+    @result_title.setter
+    def result_title(self, title:str):
+        validate_string(title, "title")
+        self.__result_title = title
 
     def parse_string(self, params: str):
         validate_string(params, "params")

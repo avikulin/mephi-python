@@ -58,6 +58,14 @@ class DbCommandTableInfo(DbCommandBase):
     def execute(self) -> List[List[str]]:
         table_name:str = self.get_param_value(0)
         table = self.metadata.get_table_schema(table_name)
+
+        # регистрируем схему результата
+        self.result_title = f"Схема таблицы '{table_name}'"
+        self.register_result_schema_item("Имя колонки")
+        self.register_result_schema_item("Тип данных")
+        self.register_result_schema_item("Обязательная?")
+        self.register_result_schema_item("Первичный ключ?")
+
         return [
             [
                 column.name,

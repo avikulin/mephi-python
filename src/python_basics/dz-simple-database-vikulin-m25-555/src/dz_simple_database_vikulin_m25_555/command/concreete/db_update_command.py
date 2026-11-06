@@ -122,7 +122,13 @@ class DbCommandUpdate(DbCommandBase):
         self.register_param_value(predicate)
 
     def execute(self) -> List[List[str]]:
-        column = self.get_param_value(1)
-        value = self.get_param_value(2)
-        predicate = self.get_param_value(3)
+        column:str = self.get_param_value(1)
+        value:str = self.get_param_value(2)
+        predicate:DbPredicate = self.get_param_value(3)
+
+        # регистрируем схему результата
+        self.result_title = f"В таблице '{self.table.name}' обновлены строки"
+        for column_name in self.table.column_names:
+            self.register_result_schema_item(column_name)
+
         return self.table_store.update_tuple(column, value, predicate)
