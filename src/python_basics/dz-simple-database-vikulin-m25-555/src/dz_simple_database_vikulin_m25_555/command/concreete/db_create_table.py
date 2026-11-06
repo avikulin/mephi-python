@@ -39,6 +39,8 @@ class DbCommandCreateTable(DbCommandBase):
         "Поддерживаются следующие типы данных: STRING, INTEGER, FLOAT, DATETIME и BOOLEAN",
     ]
 
+    NAME = "create table"
+
     def __init__(self, metadata: DbMetadataStore) -> None:
         DbCommandBase.__init__(
             self,
@@ -47,6 +49,7 @@ class DbCommandCreateTable(DbCommandBase):
             DbCommandCreateTable.PARAMS_SCHEMA,
             DbCommandCreateTable.DESCRIPTION,
             DbCommandCreateTable.RULES,
+            DbCommandCreateTable.NAME
         )
 
 

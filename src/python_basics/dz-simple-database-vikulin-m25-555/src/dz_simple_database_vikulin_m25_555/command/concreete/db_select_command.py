@@ -46,6 +46,8 @@ class DbCommandSelect(DbCommandBase):
         "Возвращаются все атрибуты записи, указанные в схеме таблицы",
     ]
 
+    NAME = "select"
+
     def __init__(self, metadata: DbMetadataStore) -> None:
         DbCommandBase.__init__(
             self,
@@ -54,6 +56,7 @@ class DbCommandSelect(DbCommandBase):
             DbCommandSelect.PARAMS_SCHEMA,
             DbCommandSelect.DESCRIPTION,
             DbCommandSelect.RULES,
+            DbCommandSelect.NAME
         )
         self.table: DbTable = None
         self.table_store: DbTableStore = None

@@ -25,6 +25,8 @@ class DbCommandDropTable(DbCommandBase):
         "Таблица должна существовать БД",
     ]
 
+    NAME = "drop table"
+
     def __init__(self, metadata: DbMetadataStore) -> None:
         DbCommandBase.__init__(
             self,
@@ -33,6 +35,7 @@ class DbCommandDropTable(DbCommandBase):
             DbCommandDropTable.PARAMS_SCHEMA,
             DbCommandDropTable.DESCRIPTION,
             DbCommandDropTable.RULES,
+            DbCommandDropTable.NAME
         )
 
     def parse_params(self, params: List[str]) -> None:

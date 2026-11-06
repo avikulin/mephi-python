@@ -37,6 +37,8 @@ class DbCommandDelete(DbCommandBase):
         "Возвращаются все колонки удаленных строк, указанные в схеме таблицы",
     ]
 
+    NAME = "delete table"
+
     def __init__(self, metadata: DbMetadataStore) -> None:
         DbCommandBase.__init__(
             self,
@@ -45,6 +47,7 @@ class DbCommandDelete(DbCommandBase):
             DbCommandDelete.PARAMS_SCHEMA,
             DbCommandDelete.DESCRIPTION,
             DbCommandDelete.RULES,
+            DbCommandDelete.NAME
         )
         self.table: DbTable = None
         self.table_store: DbTableStore = None

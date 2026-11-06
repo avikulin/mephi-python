@@ -57,6 +57,8 @@ class DbCommandUpdate(DbCommandBase):
         "Возвращаются все колонки обновленных строк, указанные в схеме таблицы",
     ]
 
+    NAME = "update"
+
     def __init__(self, metadata: DbMetadataStore) -> None:
         DbCommandBase.__init__(
             self,
@@ -65,6 +67,7 @@ class DbCommandUpdate(DbCommandBase):
             DbCommandUpdate.PARAMS_SCHEMA,
             DbCommandUpdate.DESCRIPTION,
             DbCommandUpdate.RULES,
+            DbCommandUpdate.NAME
         )
         self.table: DbTable = None
         self.table_store: DbTableStore = None

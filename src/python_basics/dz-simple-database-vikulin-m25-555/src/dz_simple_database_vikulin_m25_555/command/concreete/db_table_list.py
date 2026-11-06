@@ -15,6 +15,8 @@ class DbCommandTableList(DbCommandBase):
         "Выводятся все существующие таблицы"
     ]
 
+    NAME = "table list"
+
     def __init__(self, metadata: DbMetadataStore) -> None:
         DbCommandBase.__init__(
             self,
@@ -23,6 +25,7 @@ class DbCommandTableList(DbCommandBase):
             DbCommandTableList.PARAMS_SCHEMA,
             DbCommandTableList.DESCRIPTION,
             DbCommandTableList.RULES,
+            DbCommandTableList.NAME
         )
 
 

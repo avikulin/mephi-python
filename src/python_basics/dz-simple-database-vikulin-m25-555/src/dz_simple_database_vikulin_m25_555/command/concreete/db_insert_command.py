@@ -48,6 +48,8 @@ class DbCommandInsert(DbCommandBase):
         "Возвращаются все колонки вставленных строк, указанные в схеме таблицы",
     ]
 
+    NAME = "insert"
+
     def __init__(self, metadata: DbMetadataStore) -> None:
         DbCommandBase.__init__(
             self,
@@ -56,6 +58,7 @@ class DbCommandInsert(DbCommandBase):
             DbCommandInsert.PARAMS_SCHEMA,
             DbCommandInsert.DESCRIPTION,
             DbCommandInsert.RULES,
+            DbCommandInsert.NAME
         )
         self.table: DbTable = None
         self.table_store: DbTableStore = None

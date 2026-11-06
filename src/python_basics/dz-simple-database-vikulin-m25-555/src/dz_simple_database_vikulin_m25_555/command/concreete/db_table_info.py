@@ -28,6 +28,8 @@ class DbCommandTableInfo(DbCommandBase):
         "Таблица должна существовать в схеме БД"
     ]
 
+    NAME = "table info"
+
     def __init__(self, metadata: DbMetadataStore) -> None:
         DbCommandBase.__init__(
             self,
@@ -36,6 +38,7 @@ class DbCommandTableInfo(DbCommandBase):
             DbCommandTableInfo.PARAMS_SCHEMA,
             DbCommandTableInfo.DESCRIPTION,
             DbCommandTableInfo.RULES,
+            DbCommandTableInfo.NAME
         )
 
 
