@@ -25,7 +25,8 @@ class DbCommandBase:
         token_schema: str,
         params_schema: List[DbCommandParam],
         description: str,
-        rules: List[str]
+        rules: List[str],
+        name: str
     ):
 
         # проверка и инициализация ссылки на хранилище метаданных
@@ -49,6 +50,7 @@ class DbCommandBase:
         self.__params_values = []
         self.__result_schema = []
         self.__result_title = ""
+        self.__name = name
 
     def get_help(self) -> str:
         """Получение структурированной справочной информации по команде"""
@@ -74,6 +76,10 @@ class DbCommandBase:
         )
 
         return pretty_string
+
+    @property
+    def name(self):
+        return self.__name
 
     @property
     def metadata(self) -> DbMetadataStore:
