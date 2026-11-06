@@ -38,7 +38,6 @@ class DbCommandBase:
         # проверка ключевых параметров,
         # которые будут передаваться из наследников
         validate_string(token_schema, "token_schema")
-        validate_list(params_schema, "param_schema")
         validate_string(description, "description")
         validate_list(rules, "rules")
 

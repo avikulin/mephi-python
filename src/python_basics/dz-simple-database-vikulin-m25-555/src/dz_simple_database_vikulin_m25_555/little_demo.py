@@ -9,6 +9,8 @@ from dz_simple_database_vikulin_m25_555.command.concreete.db_insert_command impo
 from dz_simple_database_vikulin_m25_555.command.concreete.db_select_command import (
     DbCommandSelect,
 )
+from dz_simple_database_vikulin_m25_555.command.concreete.db_table_info import DbCommandTableInfo
+from dz_simple_database_vikulin_m25_555.command.concreete.db_table_list import DbCommandTableList
 from dz_simple_database_vikulin_m25_555.command.concreete.db_update_command import DbCommandUpdate
 from dz_simple_database_vikulin_m25_555.config.db_config import DbConfig
 from dz_simple_database_vikulin_m25_555.persistence.metadata_store.db_metadata_store import (
@@ -36,6 +38,19 @@ if __name__ == "__main__":
         create.parse_string(create_statement)
         create.validate()
         print("Результат: ", create.execute())
+
+    print("Выводим список таблиц:")
+    ls = DbCommandTableList(metadata)
+    ls.parse_string("table list")
+    ls.validate()
+    print(ls.execute())
+
+
+    print("Выводим схему таблицы 'books'")
+    info = DbCommandTableInfo(metadata)
+    info.parse_string("table info books")
+    info.validate()
+    print(info.execute())
 
     select_1 = DbCommandSelect(metadata)
     select_1.parse_string("select from books where id = 1")

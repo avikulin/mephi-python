@@ -2,10 +2,7 @@ from typing import List
 
 from dz_simple_database_vikulin_m25_555.command.base.db_command_base import DbCommandBase, DbCommandException
 from dz_simple_database_vikulin_m25_555.command.base.db_command_param import DbCommandParam
-from dz_simple_database_vikulin_m25_555.command.expression.db_predicate import DbPredicate
-from dz_simple_database_vikulin_m25_555.model.db_table import DbTable
 from dz_simple_database_vikulin_m25_555.persistence.metadata_store.db_metadata_store import DbMetadataStore
-from dz_simple_database_vikulin_m25_555.persistence.table_store.db_table_store import DbTableStore
 from dz_simple_database_vikulin_m25_555.utils.validation import validate_string
 
 
@@ -19,7 +16,7 @@ class DbCommandCreateTable(DbCommandBase):
         DbCommandParam(
             "имя_таблицы",
             str,
-            "Имя таблицы, в которой будет производиться отбор строк",
+            "Имя создаваемой таблицы",
             True,
         ),
         DbCommandParam(

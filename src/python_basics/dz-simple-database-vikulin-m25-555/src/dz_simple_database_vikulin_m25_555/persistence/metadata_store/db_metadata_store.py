@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List
 
 from dz_simple_database_vikulin_m25_555.config.db_config import DbConfig
 from dz_simple_database_vikulin_m25_555.model.db_table import DbTable, PKEY_NAME
@@ -153,3 +153,7 @@ class DbMetadataStore:
     def get_table_store(self, name:str) -> DbTableStore:
         self._ensure_table_exists(name)
         return self.store_index[name]
+
+    @property
+    def tables(self) -> List[str]:
+        return [ name for name in self.arena.keys() ]
