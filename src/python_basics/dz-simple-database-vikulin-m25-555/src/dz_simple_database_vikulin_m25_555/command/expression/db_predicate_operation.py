@@ -1,8 +1,6 @@
 from __future__ import annotations
-from enum import StrEnum
-from typing import Tuple
 
-from dz_simple_database_vikulin_m25_555.utils.validation import validate_string
+from enum import StrEnum
 
 
 class DbPredicateOperationException(Exception):

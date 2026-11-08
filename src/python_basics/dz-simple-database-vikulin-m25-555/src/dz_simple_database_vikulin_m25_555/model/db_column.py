@@ -5,7 +5,10 @@ from dataclasses import dataclass
 from typing import Any, Dict
 
 from dz_simple_database_vikulin_m25_555.model.db_datatype import DbDataType
-from dz_simple_database_vikulin_m25_555.utils.validation import validate_dict, validate_string
+from dz_simple_database_vikulin_m25_555.utils.validation import (
+    validate_dict,
+    validate_string,
+)
 
 COLUMN_NAME = "NAME"
 DATATYPE_NAME = "DATATYPE"
@@ -55,11 +58,8 @@ class DbColumn:
                             f"schema['{DATATYPE_NAME}']")
         )
 
-        is_primary = validate_string(schema.get(IS_PRIMARY_NAME),
-                                       f"schema[{IS_PRIMARY_NAME}]")
-
-        is_mandatory = validate_string(schema.get(IS_MANDATORY_NAME),
-                                       f"schema[{IS_MANDATORY_NAME}]")
+        is_primary = schema.get(IS_PRIMARY_NAME)
+        is_mandatory = schema.get(IS_MANDATORY_NAME)
 
         if not isinstance(is_mandatory, bool):
             raise TypeError(

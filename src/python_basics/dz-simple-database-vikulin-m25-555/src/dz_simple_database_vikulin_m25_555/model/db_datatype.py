@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import math
 from datetime import datetime
 from enum import StrEnum
 from typing import Any
-import math
+
 
 class DbDataType(StrEnum):
     """Отображает скалярные типы данных,
@@ -30,9 +31,9 @@ class DbDataType(StrEnum):
                 return str_value.lstrip("+-").isdigit()
             case DbDataType.FLOAT:
                 try:
-                    float(value)
-                    return not (math.isinf(value) or
-                                math.isnan(value))
+                    f_value = float(value)
+                    return not (math.isinf(f_value) or
+                                math.isnan(f_value))
                 except ValueError:
                     return False
             case DbDataType.DATETIME:

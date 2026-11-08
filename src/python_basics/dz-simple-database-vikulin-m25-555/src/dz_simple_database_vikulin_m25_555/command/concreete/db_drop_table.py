@@ -1,8 +1,15 @@
 from typing import List
 
-from dz_simple_database_vikulin_m25_555.command.base.db_command_base import DbCommandBase, DbCommandException
-from dz_simple_database_vikulin_m25_555.command.base.db_command_param import DbCommandParam
-from dz_simple_database_vikulin_m25_555.persistence.metadata_store.db_metadata_store import DbMetadataStore
+from dz_simple_database_vikulin_m25_555.command.base.db_command_base import (
+    DbCommandBase,
+    DbCommandException,
+)
+from dz_simple_database_vikulin_m25_555.command.base.db_command_param import (
+    DbCommandParam,
+)
+from dz_simple_database_vikulin_m25_555.persistence.metadata_store.db_metadata_store import (
+    DbMetadataStore,
+)
 from dz_simple_database_vikulin_m25_555.utils.validation import validate_string
 
 
@@ -40,17 +47,13 @@ class DbCommandDropTable(DbCommandBase):
 
     def parse_params(self, params: List[str]) -> None:
         """Ожидаем: drop table <имя_таблицы>"""
-
-        drop_token = params[0].lower()
-        table_token = params[1].lower()
+        normalized_tokens = [token.lower() for token in params]
+        drop_token = normalized_tokens[0]
+        table_token = normalized_tokens[1]
         if drop_token != "drop" or table_token != "table":
             raise DbCommandException("Нарушение семантики команды: DROP TABLE ...")
-        table_name = params[2]
-        try:
-            validate_string(table_name, "TABLE")
-        except Exception:
-            raise DbCommandException("Нарушение семантики команды: "
-                                     "некорректно задано название целевой таблицы")
+        table_name = normalized_tokens[2]
+        validate_string(table_name, "TABLE")
         self.register_param_value(table_name)
 
 

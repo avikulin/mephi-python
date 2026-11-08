@@ -1,7 +1,12 @@
 from typing import List
 
-from dz_simple_database_vikulin_m25_555.command.base.db_command_base import DbCommandBase, DbCommandException
-from dz_simple_database_vikulin_m25_555.persistence.metadata_store.db_metadata_store import DbMetadataStore
+from dz_simple_database_vikulin_m25_555.command.base.db_command_base import (
+    DbCommandBase,
+    DbCommandException,
+)
+from dz_simple_database_vikulin_m25_555.persistence.metadata_store.db_metadata_store import (
+    DbMetadataStore,
+)
 
 
 class DbCommandTableList(DbCommandBase):
@@ -31,14 +36,18 @@ class DbCommandTableList(DbCommandBase):
 
     def parse_params(self, params: List[str]) -> None:
         """Ожидаем:  table list """
-        table_token = params[0].lower()
-        list_token = params[1].lower()
+        normalized_tokens = [token.lower() for token in params]
+        table_token = normalized_tokens[0]
+        list_token = normalized_tokens[1]
         if table_token != "table" or list_token != "list":
             raise DbCommandException("Нарушение семантики команды: TABLE LIST")
 
     def execute(self) -> List[List[str]]:
         # регистрируем схему результата
-        self.result_title = f"Список зарегистрированных таблиц БД"
+        self.result_title = "Список зарегистрированных таблиц БД"
         self.register_result_schema_item("Имя таблицы")
-        return [[table_name]
-                for table_name in self.metadata.tables]
+        tables = self.metadata.tables
+        if len(tables) > 0:
+            return [[table_name] for table_name in tables]
+        else:
+            return [["(пусто)"]]

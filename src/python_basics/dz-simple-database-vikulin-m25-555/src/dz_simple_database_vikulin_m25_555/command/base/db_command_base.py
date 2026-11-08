@@ -1,16 +1,17 @@
 import copy
 import shlex
-from typing import List, Any
+from typing import Any, List
 
 from dz_simple_database_vikulin_m25_555.command.base.db_command_param import (
     DbCommandParam,
 )
-from dz_simple_database_vikulin_m25_555.persistence.metadata_store.db_metadata_store import (
+from dz_simple_database_vikulin_m25_555.persistence.metadata_store.db_metadata_store import (  # noqa: E501
     DbMetadataStore,
 )
+from dz_simple_database_vikulin_m25_555.utils.console.db_console_colors import Color
 from dz_simple_database_vikulin_m25_555.utils.validation import (
-    validate_string,
     validate_list,
+    validate_string,
 )
 
 
@@ -47,32 +48,40 @@ class DbCommandBase:
         self.__params_schema = params_schema
         self.__description = description
         self.__rules = rules
+        self.__name = name
+        self.reset()
+
+    def reset(self) -> None:
+        """Сбрасывает состояние, накопленное за предыдущий вызов команды.
+
+        Команды живут в фабрике как Singleton, поэтому значения
+        параметров и схема результата не должны переживать вызов.
+        """
         self.__params_values = []
         self.__result_schema = []
         self.__result_title = ""
-        self.__name = name
 
     def get_help(self) -> str:
         """Получение структурированной справочной информации по команде"""
         params_str = []
-        for idx, param in enumerate(self.params_schema):
-            params_str.append(f"\t{idx}) {param.describe()}")
+        for idx, param in enumerate(self.params_schema, start=1):
+            params_str.append(f"\t{Color.OKCYAN}{idx}){Color.ENDC} {param.describe()}")
 
         rules_str = []
-        for idx, rule in enumerate(self.rules):
-            rules_str.append(f"\t{idx}) {rule}")
+        for idx, rule in enumerate(self.__rules, start=1):
+            rules_str.append(f"\t{Color.OKCYAN}{idx}){Color.ENDC} {rule}")
 
         pretty_string = (
-            f"{self._token_schema}"
-            f""
-            f"{self._description}."
-            f""
-            f"Спецификация параметров вызова:"
-            f"{'\n'.join(params_str)}"
-            f""
-            f"Особенности применения:"
+            f"\n"
+            f"{Color.HEADER}{Color.BOLD}{self.__token_schema}{Color.ENDC}\n"
+            f"\n"
+            f"{self.__description}.\n"
+            f"\n"
+            f"Спецификация параметров вызова:\n"
+            f"{'\n'.join(params_str)}\n"
+            f"\n"
+            f"Особенности применения:\n"
             f"{'\n'.join(rules_str)}"
-            f""
         )
 
         return pretty_string
@@ -98,7 +107,6 @@ class DbCommandBase:
     def result_schema(self) -> List[str]:
         return [column_title for column_title in self.__result_schema]
 
-
     def register_result_schema_item(self, item:str) -> None:
         validate_string(item, "item")
         self.__result_schema.append(item)
@@ -114,6 +122,9 @@ class DbCommandBase:
 
     def parse_string(self, params: str):
         validate_string(params, "params")
+        # была singleton-уязвимость в фабрике команд, но она уже исправлена
+        # тут оставлено на всякий случай
+        self.reset()
         tokens = shlex.split(params)
         self.parse_params(tokens)
 
@@ -138,8 +149,8 @@ class DbCommandBase:
             if not param.check_type(param_value):
                 raise DbCommandException(
                     f"Параметр '{param.name}' не соответствует "
-                    f"целевому типу {param.type_ref}. "
-                    f"Фактический тип: {type(param_value)}"
+                    f"целевому типу {param.type_ref.__name__}. "
+                    f"Фактический тип: {type(param_value).__name__}"
                 )
 
             if param.is_mandatory:
@@ -149,7 +160,7 @@ class DbCommandBase:
         if mandatory_params_count > self.number_of_values:
             raise DbCommandException(
                 f"Отличается минимальное ({mandatory_params_count}) "
-                f"и фактическое ({len(self.params_values)}) количества "
+                f"и фактическое ({len(self.__params_values)}) количества "
                 f"параметров команды "
             )
 

@@ -1,12 +1,27 @@
 from typing import List
 
-from dz_simple_database_vikulin_m25_555.command.base.db_command_base import DbCommandBase, DbCommandException
-from dz_simple_database_vikulin_m25_555.command.base.db_command_param import DbCommandParam
-from dz_simple_database_vikulin_m25_555.command.expression.db_predicate import DbPredicate
-from dz_simple_database_vikulin_m25_555.command.expression.factory.db_predicate_factory import DbPredicateFactory
+from dz_simple_database_vikulin_m25_555.command.base.db_command_base import (
+    DbCommandBase,
+    DbCommandException,
+)
+from dz_simple_database_vikulin_m25_555.command.base.db_command_param import (
+    DbCommandParam,
+)
+from dz_simple_database_vikulin_m25_555.command.expression.db_predicate import (
+    DbPredicate,
+)
+from dz_simple_database_vikulin_m25_555.command.expression.factory.db_predicate_factory import (
+    DbPredicateFactory,
+)
 from dz_simple_database_vikulin_m25_555.model.db_table import DbTable
-from dz_simple_database_vikulin_m25_555.persistence.metadata_store.db_metadata_store import DbMetadataStore
-from dz_simple_database_vikulin_m25_555.persistence.table_store.db_table_store import DbTableStore
+from dz_simple_database_vikulin_m25_555.persistence.metadata_store.db_metadata_store import (
+    DbMetadataStore,
+)
+from dz_simple_database_vikulin_m25_555.persistence.table_store.db_table_store import (
+    DbTableStore,
+)
+from dz_simple_database_vikulin_m25_555.utils.console.db_console_colors import Color
+from dz_simple_database_vikulin_m25_555.utils.parsing.expr_parser import ParseExprHelper
 from dz_simple_database_vikulin_m25_555.utils.validation import validate_string
 
 
@@ -22,13 +37,13 @@ class DbCommandUpdate(DbCommandBase):
             True,
         ),
         DbCommandParam(
-            "<столбец>",
+            "столбец",
             str,
             "Название столбца, в котором будут обновляться значения",
             True,
         ),
         DbCommandParam(
-            "<новое_значение>",
+            "новое_значение",
             str,
             "Значение, которым будут обновлены строки, удовлетворяющие условию",
             True,
@@ -42,22 +57,34 @@ class DbCommandUpdate(DbCommandBase):
     ]
 
     DESCRIPTION = (
-        "Выполняет обновление значений строк в таблице (<имя_таблицы>),\n "
-        "заполняя значения заданного столбца (<столбец>) значением <новое_значение> "
-        "в тех строках, которые удовлетворяют условию [столбец_условия]=[значение_условия]."
+        f"Выполняет обновление значений строк в таблице "
+        f"{Color.OKCYAN}(<имя_таблицы>){Color.ENDC},\n"
+        f"заполняя значения заданного столбца {Color.OKCYAN}(<столбец>){Color.ENDC} "
+        f"значением {Color.OKCYAN}<новое_значение>{Color.ENDC}\n"
+        f"в тех строках, которые удовлетворяют условию "
+        f"{Color.OKCYAN}[столбец_условия]=[значение_условия]{Color.ENDC}.\n"
         "Обновленные строки возвращаются в качестве результата выполнения команды."
     )
 
     RULES = [
-        "Столбец для обновления значения (<столбец>) может быть только один",
-        "Тип значения <новое_значение> должен соответствовать типу столбца <столбец>",
-        "Столбец для проверки условия ([столбец_условия]) может быть только один"
-        "Тип значения [значение_условия] должен соответствовать типу столбца [столбец_условия]",
+        f"{Color.OKCYAN}<столбец>{Color.ENDC} для обновления значения "
+        f" может быть только один",
+        f"Тип значения {Color.OKCYAN}<новое_значение>{Color.ENDC} должен "
+        f"соответствовать типу столбца <столбец>",
+        f"Столбец для проверки условия {Color.OKCYAN}[столбец_условия]{Color.ENDC}"
+        f" может быть только один",
+        f"Тип значения {Color.OKCYAN}[значение_условия]{Color.ENDC} должен "
+        f"соответствовать типу столбца {Color.OKCYAN}[столбец_условия]{Color.ENDC}",
         "Возвращаются все строки, значения которых были обновлены",
         "Возвращаются все колонки обновленных строк, указанные в схеме таблицы",
     ]
 
     NAME = "update"
+
+    CMD_SET_TOKEN = "set"
+    CMD_WHERE_TOKEN = "where"
+
+    NOT_FOUND_IDX = -1
 
     def __init__(self, metadata: DbMetadataStore) -> None:
         DbCommandBase.__init__(
@@ -77,51 +104,54 @@ class DbCommandUpdate(DbCommandBase):
         update <имя_таблицы>
         set <столбец> = <новое_значение>
         where [столбец_условия] = [значение_условия]"""
-        update_token = params[0].lower()
+        update_token = params[0].strip().lower()
         if update_token != "update":
             raise DbCommandException("Нарушение семантики команды: UPDATE ...")
 
-        table_name = params[1]
-        try:
-            validate_string(table_name, "TABLE")
-        except Exception:
-            raise DbCommandException("Нарушение семантики команды: "
-                                     "некорректно задано название целевой таблицы")
+        table_name = params[1].strip().lower()
+        validate_string(table_name, "TABLE")
+
         self.table:DbTable = self.metadata.get_table_schema(table_name)
         self.table_store:DbTableStore = self.metadata.get_table_store(table_name)
         self.register_param_value(self.table)
 
-        set_token = params[2].lower()
-        if set_token != "set":
+        cmd_set_token_idx = DbCommandUpdate.NOT_FOUND_IDX
+        cmd_where_token_idx = DbCommandUpdate.NOT_FOUND_IDX
+        set_pattern = DbCommandUpdate.CMD_SET_TOKEN
+        where_pattern = DbCommandUpdate.CMD_WHERE_TOKEN
+
+        for i in range(2, len(params)):
+            token = params[i].strip().lower()
+            if token.find(set_pattern) != DbCommandUpdate.NOT_FOUND_IDX:
+                cmd_set_token_idx = i
+            if token.find(where_pattern) != DbCommandUpdate.NOT_FOUND_IDX:
+                cmd_where_token_idx = i
+
+        # проверяем, что оба токена найдены и после WHERE что-то есть
+        if (cmd_set_token_idx == DbCommandUpdate.NOT_FOUND_IDX or
+            cmd_where_token_idx == DbCommandUpdate.NOT_FOUND_IDX or
+            cmd_where_token_idx == len(params) - 1):
             raise DbCommandException("Нарушение семантики команды: UPDATE SET ...")
 
-        normalized_tokens = [token.lower() for token in params]
+        set_expr_str = " ".join(params[cmd_set_token_idx: cmd_where_token_idx])
+        where_expr_str = " ".join(params[cmd_where_token_idx:])
 
-        try:
-            where_token_idx = normalized_tokens.index("where")
-            if len(params)-1 == where_token_idx:
-                raise ValueError() #нет выражения после 'WHERE'
-        except ValueError:
-            raise DbCommandException("Нарушение семантики команды: "
-                                     "отсутствует выражение WHERE ...")
+        target_column, target_value = ParseExprHelper.parse_assignment(
+            set_expr_str,
+            DbCommandUpdate.CMD_SET_TOKEN,
+            None,
+            "set <столбец> = <новое_значение>")
 
-        try:
-            assignment_index = normalized_tokens.index("=")
-            if assignment_index > where_token_idx:
-                raise ValueError() # это '=' от предиката, который идет дальше
-        except ValueError:
-            raise DbCommandException("Нарушение семантики команды: "
-                                     "отсутствует часть выражения "
-                                     "SET <столбец> = <новое_значение> ...")
+        p_column, p_op, p_rvalue = ParseExprHelper.parse_predicate(
+            where_expr_str,
+            DbCommandUpdate.CMD_WHERE_TOKEN,
+            None,
+           " where [столбец_условия] = [значение_условия]")
 
+        self.register_param_value(target_column)
+        self.register_param_value(target_value)
 
-        assignment_str = "".join(params[3:where_token_idx])
-        assignment_lvalue, assignment_rvalue = assignment_str.split("=")
-        self.register_param_value(assignment_lvalue)
-        self.register_param_value(assignment_rvalue)
-
-        predicate_str = "".join(params[where_token_idx + 1:])
-        predicate = DbPredicateFactory.process_predicate(predicate_str, self.table)
+        predicate = DbPredicateFactory.construct_predicate(p_column, p_op, p_rvalue, self.table)
         self.register_param_value(predicate)
 
     def execute(self) -> List[List[str]]:

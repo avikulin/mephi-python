@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, Union, List
+from typing import Any, Dict, List, Union
 
 from dz_simple_database_vikulin_m25_555.model.db_column import DbColumn
 from dz_simple_database_vikulin_m25_555.model.db_datatype import DbDataType
@@ -114,7 +114,7 @@ class DbTable:
 
     @classmethod
     def from_json(cls, source: Dict[str, Any]) -> DbTable:
-        """Восстанавливает таблицу из JSON-строки."""
+        """Восстанавливает таблицу из распарсенного JSON (dict)."""
         validate_dict(source, "source")
         if TABLE_NAME not in source:
             raise DbTableOperationException(f"Неправильный формат источника: "
@@ -125,4 +125,23 @@ class DbTable:
                                             f"отсутствует поле '{COLUMNS_NAME}'")
         table_name = source[TABLE_NAME]
         columns = source[COLUMNS_NAME]
-        return DbTable.from_schema(table_name, columns)
+        if not isinstance(columns, list):
+            raise TypeError(
+                f"Параметр 'source['{COLUMNS_NAME}']' должен быть списком, "
+                f"получен {type(columns).__name__}"
+            )
+        restored = [DbColumn.from_schema(item) for item in columns]
+        primaries = [c for c in restored if c.is_primary]
+        expected_pkey = DbColumn(PKEY_NAME, DbDataType.INTEGER, True, True)
+        if primaries != [expected_pkey]:
+            raise DbTableOperationException(
+                f"Первичный ключ в источнике должен быть "
+                f"{expected_pkey}, получен: {primaries or 'отсутствует'}"
+            )
+        business = [c for c in restored if not c.is_primary]
+        if not business:
+            raise ValueError(
+                f"Таблица '{table_name}' должна содержать хотя бы одну "
+                f"колонку с бизнес-данными помимо первичного ключа"
+            )
+        return cls(table_name, business)

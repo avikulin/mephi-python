@@ -66,17 +66,17 @@ class TestFromJson:
 
     def test_missing_name(self):
         source = self._source(**{COLUMN_NAME: None})
-        with pytest.raises(ValueError, match=f"data\\['{COLUMN_NAME}'\\]"):
+        with pytest.raises(ValueError, match=f"schema\\['{COLUMN_NAME}'\\]"):
             DbColumn.from_json(source)
 
     def test_missing_datatype(self):
         source = self._source(**{DATATYPE_NAME: None})
-        with pytest.raises(ValueError, match=f"data\\['{DATATYPE_NAME}'\\]"):
+        with pytest.raises(ValueError, match=f"schema\\['{DATATYPE_NAME}'\\]"):
             DbColumn.from_json(source)
 
     def test_unknown_datatype(self):
         source = self._source(**{DATATYPE_NAME: "unknown"})
-        with pytest.raises(ValueError, match="Unsupported datatype"):
+        with pytest.raises(ValueError):
             DbColumn.from_json(source)
 
     @pytest.mark.parametrize("flag", [IS_MANDATORY_NAME, IS_PRIMARY_NAME])

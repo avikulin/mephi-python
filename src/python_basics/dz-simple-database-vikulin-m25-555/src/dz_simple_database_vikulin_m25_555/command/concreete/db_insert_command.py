@@ -7,11 +7,15 @@ from dz_simple_database_vikulin_m25_555.command.base.db_command_base import (
 from dz_simple_database_vikulin_m25_555.command.base.db_command_param import (
     DbCommandParam,
 )
+from dz_simple_database_vikulin_m25_555.model.db_table import DbTable
 from dz_simple_database_vikulin_m25_555.persistence.metadata_store.db_metadata_store import (
     DbMetadataStore,
 )
-from dz_simple_database_vikulin_m25_555.model.db_table import DbTable
-from dz_simple_database_vikulin_m25_555.persistence.table_store.db_table_store import DbTableStore
+from dz_simple_database_vikulin_m25_555.persistence.table_store.db_table_store import (
+    DbTableStore,
+)
+from dz_simple_database_vikulin_m25_555.utils.console.db_console_colors import Color
+from dz_simple_database_vikulin_m25_555.utils.parsing.expr_parser import ParseExprHelper
 from dz_simple_database_vikulin_m25_555.utils.validation import validate_string
 
 
@@ -25,16 +29,16 @@ class DbCommandInsert(DbCommandBase):
             True,
         ),
         DbCommandParam(
-            "<значение1..N>,",
+            "значение1..N",
             List[str],
             "Значения колонок, которые будут вставлены в строку",
             True,
         ),
     ]
     DESCRIPTION = (
-        "Выполняет вставку новой строки в таблицу (<имя_таблицы>),\n "
+        f"Выполняет вставку новой строки в таблицу ({Color.OKCYAN}<имя_таблицы>{Color.ENDC}),\n"
         "заполняя значения колонок слева направо в переданном порядке: \n"
-        "<значение1>, <значение2>, ..."
+        f"{Color.OKCYAN}<значение1>{Color.ENDC}, {Color.OKCYAN}<значение2>{Color.ENDC}, ...\n"
         "Вставленные строки возвращаются в качестве результата выполнения команды."
     )
 
@@ -67,41 +71,28 @@ class DbCommandInsert(DbCommandBase):
         """Ожидаем:
         select from <имя_таблицы> where <столбец> = <значение> или
         select from <имя_таблицы>"""
-
-        insert_token = params[0].lower()
-        into_token = params[1].lower()
+        insert_token = params[0].strip().lower()
+        into_token = params[1].strip().lower()
         if insert_token != "insert" or into_token != "into":
             raise DbCommandException("Нарушение семантики команды: INSERT INTO ...")
 
-        table_name = params[2].lower()
-        try:
-            validate_string(table_name, "TABLE")
-        except Exception:
-            raise DbCommandException("Нарушение семантики команды: "
-                                     "некорректно задано название целевой таблицы")
+        table_name = params[2].strip().lower()
+        validate_string(table_name, "TABLE")
+
         self.table = self.metadata.get_table_schema(table_name)
         self.table_store = self.metadata.get_table_store(table_name)
 
         self.register_param_value(self.table)
-        values_token = params[3].lower()
-        if values_token != "values":
-            raise DbCommandException("Нарушение семантики команды: VALUES ...")
+        values_str = " ".join(params[3:])
+        values = ParseExprHelper.parse_brackets(values_str,
+                                                "VALUES (...)", ",")
 
-        values_str = "".join(params[4:])
-        if ("(", ")") != (values_str[0], values_str[-1]):
-            raise DbCommandException(
-                f"Нарушена семантика передачи значений "
-                f"на вставку в таблицу: "
-                f"в выражении '{values_str}' не хватает скобок"
-            )
-
-        values = values_str[1:-1].split(",")
-        number_of_columns = len(self.table.column_names)
+        number_of_columns_wo_id = len(self.table.column_names) - 1 # считаем без ID
         number_of_values = len(values)
-        if number_of_values != number_of_columns:
+        if number_of_values != number_of_columns_wo_id:
             raise DbCommandException(
                 f"Количество значений для вставки ({number_of_values}) "
-                f"не соответствует количеству колонок ({number_of_columns}) "
+                f"не соответствует количеству колонок ({number_of_columns_wo_id}) "
                 f"таблицы '{table_name}'"
             )
 

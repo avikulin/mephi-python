@@ -1,8 +1,16 @@
 from typing import List
 
-from dz_simple_database_vikulin_m25_555.command.base.db_command_base import DbCommandBase, DbCommandException
-from dz_simple_database_vikulin_m25_555.command.base.db_command_param import DbCommandParam
-from dz_simple_database_vikulin_m25_555.persistence.metadata_store.db_metadata_store import DbMetadataStore
+from dz_simple_database_vikulin_m25_555.command.base.db_command_base import (
+    DbCommandBase,
+    DbCommandException,
+)
+from dz_simple_database_vikulin_m25_555.command.base.db_command_param import (
+    DbCommandParam,
+)
+from dz_simple_database_vikulin_m25_555.persistence.metadata_store.db_metadata_store import (
+    DbMetadataStore,
+)
+from dz_simple_database_vikulin_m25_555.utils.console.db_console_colors import Color
 from dz_simple_database_vikulin_m25_555.utils.validation import validate_string
 
 
@@ -18,10 +26,12 @@ class DbCommandTableInfo(DbCommandBase):
     ]
     DESCRIPTION = (
         "Выводит схему столбцов таблицы БД в следующем наборе атрибутов: \n"
-        "1) имя столбца (name)"
-        "2) тип данных столбца (datatype)"
-        "3) признак обязательности заполнения (is_mandatory)"
-        "4) признак первичного ключа записи БД (is_primary)"
+        f"{Color.OKCYAN}1){Color.ENDC} имя столбца {Color.OKCYAN}(name){Color.ENDC}\n"
+        f"{Color.OKCYAN}2){Color.ENDC} тип данных столбца {Color.OKCYAN}(datatype){Color.ENDC}\n"
+        f"{Color.OKCYAN}3){Color.ENDC} признак обязательности заполнения "
+        f"{Color.OKCYAN}(is_mandatory){Color.ENDC}\n"
+        f"{Color.OKCYAN}4){Color.ENDC} признак первичного ключа записи БД "
+        f"{Color.OKCYAN}(is_primary){Color.ENDC}"
     )
 
     RULES = [
@@ -46,11 +56,12 @@ class DbCommandTableInfo(DbCommandBase):
         """Ожидаем:
         create table info <имя_таблицы>
         """
-        table_token = params[0].lower()
-        info_token = params[1].lower()
+        normalized_tokens = [token.lower() for token in params]
+        table_token = normalized_tokens[0]
+        info_token = normalized_tokens[1]
         if table_token != "table" or info_token != "info":
             raise DbCommandException("Нарушение семантики команды: TABLE INFO ...")
-        table_name = params[2]
+        table_name = normalized_tokens[2]
         try:
             validate_string(table_name, "TABLE")
         except Exception:

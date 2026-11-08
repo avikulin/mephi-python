@@ -1,6 +1,6 @@
 import copy
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
 
 from dz_simple_database_vikulin_m25_555.utils.io import read_json
 from dz_simple_database_vikulin_m25_555.utils.io.json_io import touch_file

@@ -1,16 +1,27 @@
 from pathlib import Path
 from typing import List
 
-from dz_simple_database_vikulin_m25_555.config.db_config import DbConfig, MAX_ROWS_SELECT
-from dz_simple_database_vikulin_m25_555.command.expression.db_predicate import DbPredicate
-from dz_simple_database_vikulin_m25_555.command.expression.db_predicate_operation import DbPredicateOperation
-from dz_simple_database_vikulin_m25_555.utils.io import read_json, write_json
+from dz_simple_database_vikulin_m25_555.command.expression.db_predicate import (
+    DbPredicate,
+)
+from dz_simple_database_vikulin_m25_555.command.expression.db_predicate_operation import (
+    DbPredicateOperation,
+)
+from dz_simple_database_vikulin_m25_555.config.db_config import (
+    MAX_ROWS_SELECT,
+    DbConfig,
+)
 from dz_simple_database_vikulin_m25_555.model.db_datatype import DbDataType
-from dz_simple_database_vikulin_m25_555.model.db_table import DbTable, PKEY_NAME
-from dz_simple_database_vikulin_m25_555.persistence.table_store.db_value_constructor import DbValueConstructor
+from dz_simple_database_vikulin_m25_555.model.db_table import PKEY_NAME, DbTable
+from dz_simple_database_vikulin_m25_555.persistence.table_store.db_value_constructor import (
+    DbValueConstructor,
+)
+from dz_simple_database_vikulin_m25_555.utils.io import read_json, write_json
 from dz_simple_database_vikulin_m25_555.utils.io.json_io import touch_file
-from dz_simple_database_vikulin_m25_555.utils.validation import validate_string, validate_list
-
+from dz_simple_database_vikulin_m25_555.utils.validation import (
+    validate_list,
+    validate_string,
+)
 
 
 class DbOperationException(Exception):
@@ -23,19 +34,19 @@ class DbTableStore:
     def __init__(self, schema: DbTable, data_file_name:Path, config:DbConfig):
         if schema is None:
             raise ValueError(
-                f"Ошибка инициализации параметров: "
-                f"отсутствует параметр 'schema'"
+                "Ошибка инициализации параметров: "
+                "отсутствует параметр 'schema'"
             )
 
         if data_file_name is None:
             raise ValueError(
-                f"Ошибка инициализации параметров: "
-                f"отсутствует параметр 'data_file_name'"
+                "Ошибка инициализации параметров: "
+                "отсутствует параметр 'data_file_name'"
             )
         if config is None:
             raise DbOperationException(
-                f"Ошибка инициализации параметров: "
-                f"отсутствует параметр 'config'")
+                "Ошибка инициализации параметров: "
+                "отсутствует параметр 'config'")
         self.schema = schema
         self.table_name = schema.name
         self.data_file_name = data_file_name
@@ -122,14 +133,14 @@ class DbTableStore:
 
     def insert_tuple(self, data: List[str]) -> List[List[str]]:
         validate_list(data, "data")
-        row_pkey = int(data[0])
-        if row_pkey in self.arena.keys():
-            raise DbOperationException(f"Первичный ключ {row_pkey} уже существует к таблице")
+        row_pkey = max(self.arena.keys()) + 1 \
+                        if len(self.arena.keys()) > 0 \
+                            else 1
 
         row_values = []
-        for index, str_value in enumerate(data[1:]):
+        for index, str_value in enumerate(data):
             datatype = self.column_types[index]
-            typed_value = DbValueConstructor.construct(str_value, datatype)
+            typed_value = DbValueConstructor.construct(str_value.strip(), datatype)
             row_values.append(typed_value)
 
         self.arena[row_pkey] = row_values
@@ -164,6 +175,8 @@ class DbTableStore:
         validate_string(column_name, "column_name")
         validate_string(value, "value")
 
+        # нормализуем
+        column_name = column_name.strip().lower()
         # ID не учитываем, так как его обновлять нельзя
         if column_name == PKEY_NAME:
             raise DbOperationException(f"Запрещено обновлять значение "

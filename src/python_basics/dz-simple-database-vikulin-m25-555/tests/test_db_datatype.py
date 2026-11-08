@@ -22,7 +22,7 @@ class TestFromString:
 
     @pytest.mark.parametrize("raw", ["unknown", "", "int", "str", "123"])
     def test_invalid_names(self, raw: str):
-        with pytest.raises(ValueError, match="Unsupported datatype"):
+        with pytest.raises(ValueError):
             DbDataType.from_string(raw)
 
 

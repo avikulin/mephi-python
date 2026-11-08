@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Any, get_origin
 
+from dz_simple_database_vikulin_m25_555.utils.console.db_console_colors import Color
+
 
 @dataclass
 class DbCommandParam:
@@ -19,7 +21,7 @@ class DbCommandParam:
         """Строит структурированное человекочитаемое описание параметра"""
         mandatory = "да" if self.is_mandatory else "нет"
         return (
-            f"<{self.name}>. {self.description} "
-            f"(тип: {self.type_ref}, "
-            f"обязательность: {mandatory})"
+            f"{Color.OKCYAN}<{self.name}>{Color.ENDC}. {self.description} "
+            f"(тип: {Color.OKCYAN}{self.type_ref.__name__}{Color.ENDC}, "
+            f"обязательность: {Color.OKCYAN}{mandatory}{Color.ENDC})"
         )

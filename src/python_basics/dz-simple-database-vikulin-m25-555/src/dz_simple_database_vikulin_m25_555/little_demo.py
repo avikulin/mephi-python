@@ -1,22 +1,32 @@
-from pathlib import Path
 
-from dz_simple_database_vikulin_m25_555.command.concreete.db_create_table import DbCommandCreateTable
-from dz_simple_database_vikulin_m25_555.command.concreete.db_delete_command import DbCommandDelete
-from dz_simple_database_vikulin_m25_555.command.concreete.db_drop_table import DbCommandDropTable
+from dz_simple_database_vikulin_m25_555.command.concreete.db_create_table import (
+    DbCommandCreateTable,
+)
+from dz_simple_database_vikulin_m25_555.command.concreete.db_delete_command import (
+    DbCommandDelete,
+)
+from dz_simple_database_vikulin_m25_555.command.concreete.db_drop_table import (
+    DbCommandDropTable,
+)
 from dz_simple_database_vikulin_m25_555.command.concreete.db_insert_command import (
     DbCommandInsert,
 )
 from dz_simple_database_vikulin_m25_555.command.concreete.db_select_command import (
     DbCommandSelect,
 )
-from dz_simple_database_vikulin_m25_555.command.concreete.db_table_info import DbCommandTableInfo
-from dz_simple_database_vikulin_m25_555.command.concreete.db_table_list import DbCommandTableList
-from dz_simple_database_vikulin_m25_555.command.concreete.db_update_command import DbCommandUpdate
+from dz_simple_database_vikulin_m25_555.command.concreete.db_table_info import (
+    DbCommandTableInfo,
+)
+from dz_simple_database_vikulin_m25_555.command.concreete.db_table_list import (
+    DbCommandTableList,
+)
+from dz_simple_database_vikulin_m25_555.command.concreete.db_update_command import (
+    DbCommandUpdate,
+)
 from dz_simple_database_vikulin_m25_555.config.db_config import DbConfig
 from dz_simple_database_vikulin_m25_555.persistence.metadata_store.db_metadata_store import (
     DbMetadataStore,
 )
-from dz_simple_database_vikulin_m25_555.utils.io import read_json
 
 if __name__ == "__main__":
     config = DbConfig()

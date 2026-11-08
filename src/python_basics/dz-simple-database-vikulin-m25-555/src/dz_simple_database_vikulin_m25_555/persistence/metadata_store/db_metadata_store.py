@@ -1,11 +1,21 @@
 from pathlib import Path
-from typing import Dict, Tuple, List
+from typing import Dict, List, Tuple
 
 from dz_simple_database_vikulin_m25_555.config.db_config import DbConfig
-from dz_simple_database_vikulin_m25_555.model.db_table import DbTable, PKEY_NAME
-from dz_simple_database_vikulin_m25_555.persistence.table_store.db_table_store import DbTableStore
-from dz_simple_database_vikulin_m25_555.utils.io import read_json, write_json, JsonIOError
-from dz_simple_database_vikulin_m25_555.utils.io.json_io import drop_file, touch_file, drop_folder
+from dz_simple_database_vikulin_m25_555.model.db_table import PKEY_NAME, DbTable
+from dz_simple_database_vikulin_m25_555.persistence.table_store.db_table_store import (
+    DbTableStore,
+)
+from dz_simple_database_vikulin_m25_555.utils.io import (
+    JsonIOError,
+    read_json,
+    write_json,
+)
+from dz_simple_database_vikulin_m25_555.utils.io.json_io import (
+    drop_file,
+    drop_folder,
+    touch_file,
+)
 from dz_simple_database_vikulin_m25_555.utils.validation import validate_string
 
 SCHEMA_FILE_NAME = "schema.json"
@@ -147,12 +157,14 @@ class DbMetadataStore:
         self._flush_arena()
 
     def get_table_schema(self, name:str) -> DbTable:
-        self._ensure_table_exists(name)
-        return self.metadata_index[name]
+        normalized_name = name.strip().lower()
+        self._ensure_table_exists(normalized_name)
+        return self.metadata_index[normalized_name]
 
     def get_table_store(self, name:str) -> DbTableStore:
-        self._ensure_table_exists(name)
-        return self.store_index[name]
+        normalized_name = name.strip().lower()
+        self._ensure_table_exists(normalized_name)
+        return self.store_index[normalized_name]
 
     @property
     def tables(self) -> List[str]:
